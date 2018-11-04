@@ -2,5 +2,9 @@
   "name": "bananagram",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/webpack-env": "^1.13.6",
+    "tslint-config-prettier": "^1.15.0"
+  }
 }
