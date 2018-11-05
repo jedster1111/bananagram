@@ -4,7 +4,7 @@ import uuid from "uuid/v4";
 import "../../react-hooks.d.ts";
 
 const ReducerExample = () => {
-  const [state, sendAction] = useReducer<State, Action>(
+  const [state, dispatch] = useReducer<State, Action>(
     reducer,
     getInitialState()
   );
@@ -13,14 +13,12 @@ const ReducerExample = () => {
     <div>
       <ul>
         {state.squares.map(({ id, value }) => (
-          <button key={id} onClick={() => sendAction(removeSquare(id))}>
+          <button key={id} onClick={() => dispatch(removeSquare(id))}>
             {value}
           </button>
         ))}
       </ul>
-      <button onClick={() => sendAction(addSquare("Square!"))}>
-        Add Square
-      </button>
+      <button onClick={() => dispatch(addSquare("Square!"))}>Add Square</button>
     </div>
   );
 };
