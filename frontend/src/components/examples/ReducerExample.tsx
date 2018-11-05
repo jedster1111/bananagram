@@ -25,17 +25,25 @@ const ReducerExample = () => {
   );
 };
 
-type ActionTypes = "AddSquare" | "RemoveSquare";
+enum ActionTypes {
+  AddSquare = "AddSquare",
+  RemoveSquare = "RemoveSquare"
+}
 
 interface Square {
   id: string;
   value: string;
 }
 
-interface Action {
-  type: ActionTypes;
-  payload: { [key: string]: string };
-}
+type Action =
+  | {
+      type: ActionTypes.AddSquare;
+      payload: { value: string };
+    }
+  | {
+      type: ActionTypes.RemoveSquare;
+      payload: { id: string };
+    };
 
 interface State {
   squares: Square[];
@@ -43,14 +51,14 @@ interface State {
 
 function addSquare(value: string): Action {
   return {
-    type: "AddSquare",
+    type: ActionTypes.AddSquare,
     payload: { value }
   };
 }
 
 function removeSquare(id: string): Action {
   return {
-    type: "RemoveSquare",
+    type: ActionTypes.RemoveSquare,
     payload: { id }
   };
 }
