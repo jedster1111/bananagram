@@ -1,7 +1,7 @@
 import * as React from "react";
-import "../../react-hooks.d.ts";
-
 import { useState } from "react";
+import "../../react-hooks.d.ts";
+import ReducerExample from "./ReducerExample";
 
 export class AppClass extends React.Component<{}, { count: number }> {
   readonly state = {
@@ -28,6 +28,7 @@ export const App = () => {
     <div>
       You clicked {count} times!
       <button onClick={() => setCount(count + 1)}>Click me!</button>
+      <ReducerExample />
     </div>
   );
 };
