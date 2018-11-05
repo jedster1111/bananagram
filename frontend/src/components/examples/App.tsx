@@ -1,5 +1,5 @@
 import * as React from "react";
-import ReducerExample from "./ReducerExample";
+import ReducerExample from "./ReducerExample/ReducerExample";
 import UseStateFunc from "./UseStateExample";
 
 const App = () => (
