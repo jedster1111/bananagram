@@ -9,7 +9,8 @@
     },
     "prettier": true,
     "interface-name": false,
-    "no-empty-interface": false
+    "no-empty-interface": false,
+    "member-access":false
   },
   "rulesDirectory": ["tslint-plugin-prettier"]
 }
