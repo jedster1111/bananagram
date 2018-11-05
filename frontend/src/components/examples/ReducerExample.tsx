@@ -3,6 +3,9 @@ import { useReducer } from "react";
 import uuid from "uuid/v4";
 import "../../react-hooks.d.ts";
 
+/**
+ * Example of new useReducer hook
+ */
 const ReducerExample = () => {
   const [state, dispatch] = useReducer<State, Action>(
     reducer,
@@ -11,6 +14,7 @@ const ReducerExample = () => {
 
   return (
     <div>
+      <h4>Reducer Example</h4>
       <ul>
         {state.squares.map(({ id, value }) => (
           <button key={id} onClick={() => dispatch(removeSquare(id))}>
@@ -61,18 +65,22 @@ function removeSquare(id: string): Action {
   };
 }
 
+function generateNewSquare(value: string): Square {
+  return { id: uuid(), value };
+}
+
 function reducer(currentState: State, action: Action): State {
   switch (action.type) {
-    case "AddSquare": {
+    case ActionTypes.AddSquare: {
       return {
         ...currentState,
         squares: [
-          { id: uuid(), value: action.payload.value },
+          generateNewSquare(action.payload.value),
           ...currentState.squares
         ]
       };
     }
-    case "RemoveSquare": {
+    case ActionTypes.RemoveSquare: {
       return {
         ...currentState,
         squares: currentState.squares.filter(
@@ -87,7 +95,7 @@ function reducer(currentState: State, action: Action): State {
 
 function getInitialState(): State {
   return {
-    squares: [{ id: uuid(), value: "first" }]
+    squares: [generateNewSquare("Initial Square!")]
   };
 }
 
