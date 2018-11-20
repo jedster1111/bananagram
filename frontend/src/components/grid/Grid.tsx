@@ -15,6 +15,7 @@ interface GridProps {
   squares: Squares;
   dimensions: Dimensions;
   isSelected: boolean;
+  pickedSquare: Vector | undefined;
   handleSelectSquare: (vector: Vector) => void;
   handlePlaceSquare: (vector: Vector) => void;
 }
@@ -69,7 +70,8 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         height,
         props.squares,
         state.offset,
-        state.selectedSquare
+        state.selectedSquare,
+        props.pickedSquare
       )}
     </div>
   );
@@ -80,11 +82,12 @@ function renderGrid(
   height: number,
   squares: Squares,
   offset: Vector,
-  selectedSquare: Vector
+  hoveredSquare: Vector,
+  pickedSquare: Vector | undefined
 ) {
   const rows: SquareProps[][] = [];
 
-  const { x: selX, y: selY } = selectedSquare;
+  const { x: hoveredX, y: hoveredY } = hoveredSquare;
 
   for (let y = 0; y < height; y++) {
     const row: SquareProps[] = [];
@@ -92,9 +95,17 @@ function renderGrid(
     for (let x = 0; x < width; x++) {
       const { x: offsetX, y: offsetY } = applyOffset(x, y, offset);
       const column = squares[offsetX];
+
+      const isHovered = offsetX === hoveredX && offsetY === hoveredY;
+      const isPicked =
+        !!pickedSquare &&
+        offsetX === pickedSquare.x &&
+        offsetY === pickedSquare.y;
+
       row.push({
         value: (column && column[offsetY]) || "",
-        isSelected: offsetX === selX && offsetY === selY
+        isHovered,
+        isPicked
       });
     }
 

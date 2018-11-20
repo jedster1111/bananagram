@@ -38,6 +38,7 @@ const Game: React.FunctionComponent<{}> = props => {
         handleSelectSquare={handleSelectSquare}
         handlePlaceSquare={handlePlaceSquare}
         isSelected={isSelected}
+        pickedSquare={state.selected && state.selected.originalPosition}
       />
     </>
   );

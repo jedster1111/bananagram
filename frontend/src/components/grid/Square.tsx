@@ -3,10 +3,12 @@ import styled from "styled-components";
 
 export interface SquareProps {
   value: string;
-  isSelected: boolean;
+  isHovered: boolean;
+  isPicked: boolean;
 }
 
-const SquareContainer = styled.div<{ isSelected: boolean }>`
+const SquareContainer = styled.div<{ isSelected: boolean; isPicked: boolean }>`
+  transition: border-color 0.5s;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -16,11 +18,18 @@ const SquareContainer = styled.div<{ isSelected: boolean }>`
   height: 50px;
   border: ${props => (props.isSelected ? "solid 2px black" : "solid 1px grey")};
   margin: 3px;
+  // border-color: ${props => (props.isPicked ? "red" : "black")};
+  opacity: ${props => (props.isPicked ? "0.3" : "1")};
 `;
 
 const Square: React.FunctionComponent<SquareProps> = ({
   value,
-  isSelected
-}) => <SquareContainer isSelected={isSelected}>{value}</SquareContainer>;
+  isHovered,
+  isPicked
+}) => (
+  <SquareContainer isSelected={isHovered} isPicked={isPicked}>
+    {value}
+  </SquareContainer>
+);
 
 export default React.memo(Square);
