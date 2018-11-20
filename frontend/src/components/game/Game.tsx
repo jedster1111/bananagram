@@ -5,9 +5,11 @@ import { Actions, placeSquare, selectSquare } from "./actions";
 import { getInitialState, reducer, State } from "./reducer";
 
 export interface Squares {
-  [column: number]: {
-    [row: number]: string | undefined;
-  };
+  [column: number]:
+    | {
+        [row: number]: string | undefined;
+      }
+    | undefined;
 }
 
 const Game: React.FunctionComponent<{}> = props => {
@@ -26,6 +28,9 @@ const Game: React.FunctionComponent<{}> = props => {
         {isSelected
           ? `You have selected ${state.selected && state.selected.value}`
           : `Nothing selected`}
+      </p>
+      <p>
+        Use <code>Enter</code> to select and then drop tiles
       </p>
       <Grid
         squares={state.squares}

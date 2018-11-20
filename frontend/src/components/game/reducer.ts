@@ -28,8 +28,13 @@ export function reducer(currentState: State, action: Actions): State {
   switch (action.type) {
     case ActionTypes.selectSquare: {
       const { x, y } = action.payload.vector;
-      const selectedSquare = currentState.squares[x][y];
 
+      const col = currentState.squares[x];
+      if (!col) {
+        return currentState;
+      }
+
+      const selectedSquare = col[y];
       if (!selectedSquare) {
         return currentState;
       }
@@ -46,10 +51,8 @@ export function reducer(currentState: State, action: Actions): State {
     case ActionTypes.placeSquare: {
       const { x: xNew, y: yNew } = action.payload.vector;
 
-      if (
-        !currentState.selected ||
-        (currentState.squares[xNew] && currentState.squares[xNew][yNew])
-      ) {
+      const newCol = currentState.squares[xNew];
+      if (!currentState.selected || (newCol && newCol[yNew])) {
         return currentState;
       }
 
@@ -57,12 +60,19 @@ export function reducer(currentState: State, action: Actions): State {
       const newSquares = { ...currentState.squares };
 
       newSquares[xOrig] = { ...currentState.squares[xOrig] };
-      newSquares[xOrig][yOrig] = undefined;
+
+      const origCol = newSquares[xOrig];
+      if (origCol) {
+        origCol[yOrig] = undefined;
+      }
 
       if (xOrig !== xNew) {
         newSquares[xNew] = { ...currentState.squares[xNew] };
       }
-      newSquares[xNew][yNew] = currentState.selected.value;
+      const newColClone = newSquares[xNew];
+      if (newColClone) {
+        newColClone[yNew] = currentState.selected.value;
+      }
 
       return {
         ...currentState,

@@ -1,8 +1,9 @@
 import * as React from "react";
 import styled from "styled-components";
 import { Squares } from "../game/Game";
-import { Actions, transformOffset, translateSelector, Vector } from "./actions";
-import { createVector, getInitialState, reducer, State } from "./reducer";
+import { Actions, Vector } from "./actions";
+import { handleKeyPresses } from "./handleKeyPresses";
+import { getInitialState, reducer, State } from "./reducer";
 import Square, { SquareProps } from "./Square";
 
 export interface Dimensions {
@@ -54,7 +55,6 @@ const Grid: React.FunctionComponent<GridProps> = props => {
 
   return (
     <div>
-      <p>Squares</p>
       <p>
         Offset: {state.offset.x}, {state.offset.y}
       </p>
@@ -112,47 +112,6 @@ function renderGrid(
       ))}
     </SquaresContainer>
   );
-}
-
-function handleKeyPresses(
-  event: KeyboardEvent,
-  dispatch: React.Dispatch<Actions>,
-  handleSelectSquare: (vector: Vector) => void,
-  handlePlaceSquare: (vector: Vector) => void,
-  selectedSquare: Vector,
-  isSelected: boolean
-) {
-  const isCtrlPressed = event.getModifierState("Control");
-  switch (event.key) {
-    case "ArrowUp": {
-      const { x, y } = createVector(0, -1);
-      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
-      break;
-    }
-    case "ArrowRight": {
-      const { x, y } = createVector(1, 0);
-      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
-      break;
-    }
-    case "ArrowDown": {
-      const { x, y } = createVector(0, 1);
-      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
-      break;
-    }
-    case "ArrowLeft": {
-      const { x, y } = createVector(-1, 0);
-      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
-      break;
-    }
-    case "Enter": {
-      isSelected
-        ? handlePlaceSquare(selectedSquare)
-        : handleSelectSquare(selectedSquare);
-    }
-    default: {
-      break;
-    }
-  }
 }
 
 function applyOffset(x: number, y: number, offset: Vector): Vector {
