@@ -1,14 +1,9 @@
 import * as React from "react";
 import styled from "styled-components";
-import { Actions, transformOffset, Vector } from "./actions";
-import { getInitialState, reducer, State } from "./reducer";
+import { Squares } from "../game/Game";
+import { Actions, transformOffset, translateSelector, Vector } from "./actions";
+import { createVector, getInitialState, reducer, State } from "./reducer";
 import Square, { SquareProps } from "./Square";
-
-export interface Squares {
-  [column: number]: {
-    [row: number]: string | undefined;
-  };
-}
 
 export interface Dimensions {
   width: number;
@@ -18,6 +13,9 @@ export interface Dimensions {
 interface GridProps {
   squares: Squares;
   dimensions: Dimensions;
+  isSelected: boolean;
+  handleSelectSquare: (vector: Vector) => void;
+  handlePlaceSquare: (vector: Vector) => void;
 }
 
 const SquaresContainer = styled.div`
@@ -38,7 +36,14 @@ const Grid: React.FunctionComponent<GridProps> = props => {
 
   React.useEffect(() => {
     const onKeyPress = (event: KeyboardEvent) =>
-      handleNavigation(event, dispatch);
+      handleKeyPresses(
+        event,
+        dispatch,
+        props.handleSelectSquare,
+        props.handlePlaceSquare,
+        state.selectedSquare,
+        props.isSelected
+      );
     window.document.addEventListener("keydown", onKeyPress);
     return () => {
       window.document.removeEventListener("keydown", onKeyPress);
@@ -54,9 +59,18 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         Offset: {state.offset.x}, {state.offset.y}
       </p>
       <p>
+        Current Selection: {state.selectedSquare.x}, {state.selectedSquare.y}
+      </p>
+      <p>
         Use <code>ctlr & arrow keys</code> to navigate
       </p>
-      {renderGrid(width, height, props.squares, state.offset)}
+      {renderGrid(
+        width,
+        height,
+        props.squares,
+        state.offset,
+        state.selectedSquare
+      )}
     </div>
   );
 };
@@ -65,9 +79,12 @@ function renderGrid(
   width: number,
   height: number,
   squares: Squares,
-  offset: Vector
+  offset: Vector,
+  selectedSquare: Vector
 ) {
   const rows: SquareProps[][] = [];
+
+  const { x: selX, y: selY } = selectedSquare;
 
   for (let y = 0; y < height; y++) {
     const row: SquareProps[] = [];
@@ -76,7 +93,8 @@ function renderGrid(
       const { x: offsetX, y: offsetY } = applyOffset(x, y, offset);
       const column = squares[offsetX];
       row.push({
-        value: (column && column[offsetY]) || ""
+        value: (column && column[offsetY]) || "",
+        isSelected: offsetX === selX && offsetY === selY
       });
     }
 
@@ -88,7 +106,7 @@ function renderGrid(
       {rows.map((row, indexRow) => (
         <RowContainer key={indexRow}>
           {row.map((square, indexCol) => (
-            <Square value={square.value} key={indexCol} />
+            <Square {...square} key={indexCol} />
           ))}
         </RowContainer>
       ))}
@@ -96,37 +114,49 @@ function renderGrid(
   );
 }
 
-function handleNavigation(
+function handleKeyPresses(
   event: KeyboardEvent,
-  dispatch: React.Dispatch<Actions>
+  dispatch: React.Dispatch<Actions>,
+  handleSelectSquare: (vector: Vector) => void,
+  handlePlaceSquare: (vector: Vector) => void,
+  selectedSquare: Vector,
+  isSelected: boolean
 ) {
-  if (event.getModifierState("Control")) {
-    switch (event.key) {
-      case "ArrowUp": {
-        dispatch(transformOffset(0, 1));
-        break;
-      }
-      case "ArrowRight": {
-        dispatch(transformOffset(1, 0));
-        break;
-      }
-      case "ArrowDown": {
-        dispatch(transformOffset(0, -1));
-        break;
-      }
-      case "ArrowLeft": {
-        dispatch(transformOffset(-1, 0));
-        break;
-      }
-      default: {
-        break;
-      }
+  const isCtrlPressed = event.getModifierState("Control");
+  switch (event.key) {
+    case "ArrowUp": {
+      const { x, y } = createVector(0, -1);
+      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
+      break;
+    }
+    case "ArrowRight": {
+      const { x, y } = createVector(1, 0);
+      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
+      break;
+    }
+    case "ArrowDown": {
+      const { x, y } = createVector(0, 1);
+      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
+      break;
+    }
+    case "ArrowLeft": {
+      const { x, y } = createVector(-1, 0);
+      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
+      break;
+    }
+    case "Enter": {
+      isSelected
+        ? handlePlaceSquare(selectedSquare)
+        : handleSelectSquare(selectedSquare);
+    }
+    default: {
+      break;
     }
   }
 }
 
 function applyOffset(x: number, y: number, offset: Vector): Vector {
-  return { x: x - offset.x, y: y + offset.y };
+  return { x: x - offset.x, y: y - offset.y };
 }
 
 export default Grid;

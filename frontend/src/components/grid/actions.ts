@@ -1,8 +1,9 @@
 export enum ActionTypes {
-  transformOffset = "TRANSFORM_OFFSET"
+  transformOffset = "TRANSFORM_OFFSET",
+  translateSelector = "TRANSLATE_SELECTOR"
 }
 
-export type Actions = TransformOffsetAction;
+export type Actions = TransformOffsetAction | TranslateSelectorAction;
 
 export interface Vector {
   x: number;
@@ -17,6 +18,21 @@ export interface TransformOffsetAction {
 export function transformOffset(x: number, y: number): TransformOffsetAction {
   return {
     type: ActionTypes.transformOffset,
+    payload: { vector: { x, y } }
+  };
+}
+
+export interface TranslateSelectorAction {
+  type: ActionTypes.translateSelector;
+  payload: { vector: Vector };
+}
+
+export function translateSelector(
+  x: number,
+  y: number
+): TranslateSelectorAction {
+  return {
+    type: ActionTypes.translateSelector,
     payload: { vector: { x, y } }
   };
 }
