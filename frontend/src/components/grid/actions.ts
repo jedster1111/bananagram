@@ -3,7 +3,7 @@ export enum ActionTypes {
   translateSelector = "TRANSLATE_SELECTOR"
 }
 
-export type Actions = TranslateOffsetAction | TranslateSelectorAction;
+export type GridActions = TranslateOffsetAction | TranslateSelectorAction;
 
 export interface Vector {
   x: number;

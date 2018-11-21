@@ -1,5 +1,5 @@
 import { createVector, inverse, translate } from "../../common/vectorMethods";
-import { Actions, ActionTypes, Vector } from "./actions";
+import { ActionTypes, GridActions, Vector } from "./actions";
 
 export interface State {
   offset: Vector;
@@ -13,7 +13,7 @@ export function getInitialState(): State {
   };
 }
 
-export function reducer(currentState: State, action: Actions): State {
+export function reducer(currentState: State, action: GridActions): State {
   switch (action.type) {
     case ActionTypes.translateOffset: {
       const vector = action.payload.vector;

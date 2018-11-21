@@ -1,11 +1,11 @@
 import { getValue, setSquareValue } from "../../common/squaresMethods";
 import { Vector } from "../grid/actions";
-import { Actions, ActionTypes } from "./actions";
+import { ActionTypes, GameActions } from "./actions";
 import { Squares } from "./Game";
 
 export interface Selected {
   originalPosition: Vector;
-  value: string;
+  squares: Squares;
 }
 
 export interface State {
@@ -27,7 +27,7 @@ export function getInitialState(): State {
   };
 }
 
-export function reducer(currentState: State, action: Actions): State {
+export function reducer(currentState: State, action: GameActions): State {
   switch (action.type) {
     case ActionTypes.selectSquare: {
       const selectedSquare = action.payload.vector;
@@ -40,60 +40,44 @@ export function reducer(currentState: State, action: Actions): State {
       if (!selectedSquareValue) {
         return {
           ...currentState,
-          selected: undefined,
-          error: "Can't pick up, there's no tile there!"
+          error: "Can't select, there's no tile there!"
         };
       }
 
-      const newSquares = setSquareValue(
-        selectedSquare,
-        undefined,
-        currentState.squares
-      );
+      const originalPosition =
+        currentState.selected === undefined
+          ? selectedSquare
+          : currentState.selected.originalPosition;
+
+      const newSquares =
+        currentState.selected === undefined
+          ? setSquareValue(selectedSquare, selectedSquareValue, {})
+          : setSquareValue(
+              selectedSquare,
+              selectedSquareValue,
+              currentState.selected.squares
+            );
+
+      console.log(newSquares);
 
       return {
         ...currentState,
         selected: {
           ...currentState.selected,
-          originalPosition: selectedSquare,
-          value: selectedSquareValue
+          originalPosition,
+          squares: newSquares
         },
-        error: undefined,
-        squares: newSquares
+        error: undefined
       };
     }
 
+    case ActionTypes.clearSelected: {
+      console.log("Cleared selected!");
+      return { ...currentState, selected: undefined };
+    }
+
     case ActionTypes.placeSquare: {
-      // there's nothing to put down
-      if (!currentState.selected) {
-        return { ...currentState, error: "You don't have anything to place!" };
-      }
-
-      const oldSquares = currentState.squares;
-      const selectedSquare = action.payload.vector;
-      const { value } = currentState.selected;
-
-      const squaresAddPlaced = setSquareValue(
-        selectedSquare,
-        value,
-        oldSquares
-      );
-
-      const selectedSquareValue = getValue(selectedSquare, oldSquares);
-
-      // if placing on a square that contains a tile already, pick up that tile.
-      const selected: Selected | undefined = selectedSquareValue
-        ? {
-            originalPosition: selectedSquare,
-            value: selectedSquareValue
-          }
-        : undefined;
-
-      return {
-        ...currentState,
-        selected,
-        squares: squaresAddPlaced
-      };
+      return currentState;
     }
 
     default: {

@@ -7,8 +7,9 @@ import {
   isSameVector,
   translate
 } from "../../common/vectorMethods";
+import { GameActions } from "../game/actions";
 import { Squares } from "../game/Game";
-import { Actions, Vector } from "./actions";
+import { GridActions, Vector } from "./actions";
 import { handleKeyPresses } from "./handleKeyPresses";
 import { getInitialState, reducer, State } from "./reducer";
 import Square, { SquareProps } from "./Square";
@@ -23,8 +24,7 @@ interface GridProps {
   dimensions: Dimensions;
   isSelected: boolean;
   pickedSquare: Vector | undefined;
-  handleSelectSquare: (vector: Vector) => void;
-  handlePlaceSquare: (vector: Vector) => void;
+  gameDispatch: React.Dispatch<GameActions>;
 }
 
 const SquaresContainer = styled.div`
@@ -38,7 +38,7 @@ const RowContainer = styled.div`
 `;
 
 const Grid: React.FunctionComponent<GridProps> = props => {
-  const [state, dispatch] = React.useReducer<State, Actions>(
+  const [state, dispatch] = React.useReducer<State, GridActions>(
     reducer,
     getInitialState()
   );
@@ -48,11 +48,9 @@ const Grid: React.FunctionComponent<GridProps> = props => {
       handleKeyPresses(
         event,
         dispatch,
-        props.handleSelectSquare,
-        props.handlePlaceSquare,
+        props.gameDispatch,
         state.selectedSquare,
         state.offset,
-        props.isSelected,
         props.dimensions
       );
     window.document.addEventListener("keydown", onKeyPress);

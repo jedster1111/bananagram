@@ -1,8 +1,8 @@
 import * as React from "react";
 import styled from "styled-components";
-import { Vector } from "../grid/actions";
 import Grid from "../grid/Grid";
-import { Actions, placeSquare, selectSquare } from "./actions";
+import { GameActions } from "./actions";
+import { handleGameKeyPresses } from "./handleGameKeyPresses";
 import { getInitialState, reducer, State } from "./reducer";
 
 export interface Squares {
@@ -18,23 +18,25 @@ const GameInfoContainer = styled.div`
 `;
 
 const Game: React.FunctionComponent<{}> = props => {
-  const [state, dispatch] = React.useReducer<State, Actions>(
+  const [state, dispatch] = React.useReducer<State, GameActions>(
     reducer,
     getInitialState()
   );
 
+  React.useEffect(() => {
+    const onKeyPress = (event: KeyboardEvent) =>
+      handleGameKeyPresses(event, dispatch);
+    window.document.addEventListener("keydown", onKeyPress);
+    return () => {
+      window.document.removeEventListener("keydown", onKeyPress);
+    };
+  });
+
   const isSelected = !!state.selected;
-  const handleSelectSquare = ({ x, y }: Vector) => dispatch(selectSquare(x, y));
-  const handlePlaceSquare = ({ x, y }: Vector) => dispatch(placeSquare(x, y));
 
   return (
     <>
       <GameInfoContainer>
-        <p>
-          {isSelected
-            ? `You have selected ${state.selected && state.selected.value}`
-            : `Nothing selected`}
-        </p>
         <p>
           Use <code>Enter</code> to select and then drop tiles
         </p>
@@ -43,10 +45,9 @@ const Game: React.FunctionComponent<{}> = props => {
       <Grid
         squares={state.squares}
         dimensions={{ width: 10, height: 10 }}
-        handleSelectSquare={handleSelectSquare}
-        handlePlaceSquare={handlePlaceSquare}
         isSelected={isSelected}
         pickedSquare={state.selected && state.selected.originalPosition}
+        gameDispatch={dispatch}
       />
     </>
   );
