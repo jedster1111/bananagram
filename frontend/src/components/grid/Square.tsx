@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "styled-components";
 
 export interface SquareProps {
-  value: string;
+  value: string | undefined;
   isHovered: boolean;
   isPicked: boolean;
 }
@@ -18,8 +18,8 @@ const SquareContainer = styled.div<{ isSelected: boolean; isPicked: boolean }>`
   height: 50px;
   border: ${props => (props.isSelected ? "solid 2px black" : "solid 1px grey")};
   margin: 3px;
-  // border-color: ${props => (props.isPicked ? "red" : "black")};
-  opacity: ${props => (props.isPicked ? "0.3" : "1")};
+  border-color: ${props => (props.isPicked ? "red" : "grey")};
+  // opacity: ${props => (props.isPicked ? "0.3" : "1")};
 `;
 
 const Square: React.FunctionComponent<SquareProps> = ({

@@ -1,5 +1,5 @@
-import { Actions, transformOffset, translateSelector, Vector } from "./actions";
-import { createVector } from "./reducer";
+import { createVector } from "../../common/vectorMethods";
+import { Actions, translateOffset, translateSelector, Vector } from "./actions";
 
 export function handleKeyPresses(
   event: KeyboardEvent,
@@ -13,22 +13,22 @@ export function handleKeyPresses(
   switch (event.key) {
     case "ArrowUp": {
       const { x, y } = createVector(0, -1);
-      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
+      dispatch(isCtrlPressed ? translateOffset(x, y) : translateSelector(x, y));
       break;
     }
     case "ArrowRight": {
       const { x, y } = createVector(1, 0);
-      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
+      dispatch(isCtrlPressed ? translateOffset(x, y) : translateSelector(x, y));
       break;
     }
     case "ArrowDown": {
       const { x, y } = createVector(0, 1);
-      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
+      dispatch(isCtrlPressed ? translateOffset(x, y) : translateSelector(x, y));
       break;
     }
     case "ArrowLeft": {
       const { x, y } = createVector(-1, 0);
-      dispatch(isCtrlPressed ? transformOffset(x, y) : translateSelector(x, y));
+      dispatch(isCtrlPressed ? translateOffset(x, y) : translateSelector(x, y));
       break;
     }
     case "Enter": {

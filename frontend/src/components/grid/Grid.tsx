@@ -1,5 +1,12 @@
 import * as React from "react";
 import styled from "styled-components";
+import { getValue } from "../../common/getValue";
+import {
+  createVector,
+  inverse,
+  isSameVector,
+  translate
+} from "../../common/vectorMethods";
 import { Squares } from "../game/Game";
 import { Actions, Vector } from "./actions";
 import { handleKeyPresses } from "./handleKeyPresses";
@@ -87,23 +94,19 @@ function renderGrid(
 ) {
   const rows: SquareProps[][] = [];
 
-  const { x: hoveredX, y: hoveredY } = hoveredSquare;
-
   for (let y = 0; y < height; y++) {
     const row: SquareProps[] = [];
 
     for (let x = 0; x < width; x++) {
-      const { x: offsetX, y: offsetY } = applyOffset(x, y, offset);
-      const column = squares[offsetX];
+      const offsetPosition = createVector(x, y);
+      const actualPosition = translate(offsetPosition, inverse(offset));
 
-      const isHovered = offsetX === hoveredX && offsetY === hoveredY;
+      const isHovered = isSameVector(actualPosition, hoveredSquare);
       const isPicked =
-        !!pickedSquare &&
-        offsetX === pickedSquare.x &&
-        offsetY === pickedSquare.y;
+        !!pickedSquare && isSameVector(actualPosition, pickedSquare);
 
       row.push({
-        value: (column && column[offsetY]) || "",
+        value: getValue(actualPosition, squares),
         isHovered,
         isPicked
       });
@@ -123,10 +126,6 @@ function renderGrid(
       ))}
     </SquaresContainer>
   );
-}
-
-function applyOffset(x: number, y: number, offset: Vector): Vector {
-  return { x: x - offset.x, y: y - offset.y };
 }
 
 export default Grid;

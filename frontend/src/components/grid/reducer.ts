@@ -1,5 +1,5 @@
+import { createVector, translate } from "../../common/vectorMethods";
 import { Actions, ActionTypes, Vector } from "./actions";
-import { transform } from "./transform";
 
 export interface State {
   offset: Vector;
@@ -15,16 +15,16 @@ export function getInitialState(): State {
 
 export function reducer(currentState: State, action: Actions): State {
   switch (action.type) {
-    case ActionTypes.transformOffset: {
+    case ActionTypes.translateOffset: {
       return {
         ...currentState,
-        offset: transform(currentState.offset, action.payload.vector)
+        offset: translate(currentState.offset, action.payload.vector)
       };
     }
     case ActionTypes.translateSelector: {
       return {
         ...currentState,
-        selectedSquare: transform(
+        selectedSquare: translate(
           currentState.selectedSquare,
           action.payload.vector
         )
@@ -33,8 +33,4 @@ export function reducer(currentState: State, action: Actions): State {
     default:
       return currentState;
   }
-}
-
-export function createVector(x: number, y: number): Vector {
-  return { x, y };
 }
