@@ -1,4 +1,4 @@
-import { createVector, translate } from "../../common/vectorMethods";
+import { createVector, inverse, translate } from "../../common/vectorMethods";
 import { Actions, ActionTypes, Vector } from "./actions";
 
 export interface State {
@@ -16,18 +16,23 @@ export function getInitialState(): State {
 export function reducer(currentState: State, action: Actions): State {
   switch (action.type) {
     case ActionTypes.translateOffset: {
+      const vector = action.payload.vector;
       return {
         ...currentState,
-        offset: translate(currentState.offset, action.payload.vector)
+        offset: translate(currentState.offset, vector),
+        selectedSquare: translate(currentState.selectedSquare, inverse(vector)) // prevent selected square from moving
       };
     }
+
     case ActionTypes.translateSelector: {
+      const newActualPosition = translate(
+        currentState.selectedSquare,
+        action.payload.vector
+      );
+
       return {
         ...currentState,
-        selectedSquare: translate(
-          currentState.selectedSquare,
-          action.payload.vector
-        )
+        selectedSquare: newActualPosition
       };
     }
     default:

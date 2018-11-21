@@ -51,7 +51,9 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         props.handleSelectSquare,
         props.handlePlaceSquare,
         state.selectedSquare,
-        props.isSelected
+        state.offset,
+        props.isSelected,
+        props.dimensions
       );
     window.document.addEventListener("keydown", onKeyPress);
     return () => {
@@ -98,15 +100,15 @@ function renderGrid(
     const row: SquareProps[] = [];
 
     for (let x = 0; x < width; x++) {
-      const offsetPosition = createVector(x, y);
-      const actualPosition = translate(offsetPosition, inverse(offset));
+      const relativePosition = createVector(x, y);
+      const absolutePosition = translate(relativePosition, inverse(offset));
 
-      const isHovered = isSameVector(actualPosition, hoveredSquare);
+      const isHovered = isSameVector(absolutePosition, hoveredSquare);
       const isPicked =
-        !!pickedSquare && isSameVector(actualPosition, pickedSquare);
+        !!pickedSquare && isSameVector(absolutePosition, pickedSquare);
 
       row.push({
-        value: getValue(actualPosition, squares),
+        value: getValue(absolutePosition, squares),
         isHovered,
         isPicked
       });
