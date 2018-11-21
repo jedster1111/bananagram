@@ -1,6 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
-import { getValue } from "../../common/getValue";
+import { getValue } from "../../common/squaresMethods";
 import {
   createVector,
   inverse,

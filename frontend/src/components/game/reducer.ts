@@ -1,5 +1,4 @@
-import { getValue } from "../../common/getValue";
-import { setSquareValue } from "../../common/squaresMethods";
+import { getValue, setSquareValue } from "../../common/squaresMethods";
 import { Vector } from "../grid/actions";
 import { Actions, ActionTypes } from "./actions";
 import { Squares } from "./Game";
@@ -74,36 +73,27 @@ export function reducer(currentState: State, action: Actions): State {
       const selectedSquare = action.payload.vector;
       const { value } = currentState.selected;
 
-      // swapping with existing tile
-      const selectedSquareValue = getValue(selectedSquare, oldSquares);
-      if (selectedSquareValue) {
-        const squaresAddPlaced = setSquareValue(
-          selectedSquare,
-          value,
-          oldSquares
-        );
+      const squaresAddPlaced = setSquareValue(
+        selectedSquare,
+        value,
+        oldSquares
+      );
 
-        return {
-          ...currentState,
-          selected: {
+      const selectedSquareValue = getValue(selectedSquare, oldSquares);
+
+      // if placing on a square that contains a tile already, pick up that tile.
+      const selected: Selected | undefined = selectedSquareValue
+        ? {
             originalPosition: selectedSquare,
             value: selectedSquareValue
-          },
-          squares: squaresAddPlaced
-        };
-      } else {
-        const squaresAddPlaced = setSquareValue(
-          selectedSquare,
-          value,
-          oldSquares
-        );
+          }
+        : undefined;
 
-        return {
-          ...currentState,
-          selected: undefined,
-          squares: squaresAddPlaced
-        };
-      }
+      return {
+        ...currentState,
+        selected,
+        squares: squaresAddPlaced
+      };
     }
 
     default: {
