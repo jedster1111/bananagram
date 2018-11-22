@@ -1,5 +1,5 @@
 import { getValueInSquares, setSquareValue } from "../../common/squaresMethods";
-import { Vector } from "../grid/actions";
+import { Vector } from "../../common/vectorMethods";
 import { ActionTypes, GameActions } from "./actions";
 import { Squares } from "./Game";
 

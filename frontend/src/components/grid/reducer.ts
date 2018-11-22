@@ -3,14 +3,10 @@ import {
   inverseVector,
   translateVector
 } from "../../common/vectorMethods";
-import { ActionTypes, GridActions, Vector } from "./actions";
+import { ActionTypes, GridActions } from "./actions";
+import { State } from "./Grid";
 
-export interface State {
-  offset: Vector;
-  hoveredSquare: Vector;
-}
-
-export function getInitialState(): State {
+export function createInitialState(): State {
   return {
     offset: createVector(0, 0),
     hoveredSquare: createVector(0, 0)

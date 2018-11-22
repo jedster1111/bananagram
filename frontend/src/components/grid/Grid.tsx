@@ -5,15 +5,21 @@ import {
   createVector,
   inverseVector,
   isSameVector,
-  translateVector
+  translateVector,
+  Vector
 } from "../../common/vectorMethods";
 import { GameActions } from "../game/actions";
 import { Squares } from "../game/Game";
 import { Selected } from "../game/reducer";
-import { GridActions, Vector } from "./actions";
-import { handleKeyPresses } from "./handleKeyPresses";
-import { getInitialState, reducer, State } from "./reducer";
+import { GridActions } from "./actions";
+import { handleKeyPresses } from "./handleGridKeyPresses";
+import { createInitialState, reducer } from "./reducer";
 import Square, { SquareProps } from "./Square";
+
+export interface State {
+  offset: Vector;
+  hoveredSquare: Vector;
+}
 
 export interface Dimensions {
   width: number;
@@ -40,7 +46,7 @@ const RowContainer = styled.div`
 const Grid: React.FunctionComponent<GridProps> = props => {
   const [state, dispatch] = React.useReducer<State, GridActions>(
     reducer,
-    getInitialState()
+    createInitialState()
   );
 
   React.useEffect(() => {

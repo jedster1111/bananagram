@@ -1,3 +1,8 @@
+import {
+  VectorAction,
+  vectorActionCreatorFactory
+} from "../../common/vectorActionFactory";
+
 export enum ActionTypes {
   translateOffset = "TRANSLATE_OFFSET",
   translateSelector = "TRANSLATE_SELECTOR"
@@ -5,34 +10,16 @@ export enum ActionTypes {
 
 export type GridActions = TranslateOffsetAction | TranslateSelectorAction;
 
-export interface Vector {
-  x: number;
-  y: number;
-}
+export type TranslateOffsetAction = VectorAction<ActionTypes.translateOffset>;
 
-export interface TranslateOffsetAction {
-  type: ActionTypes.translateOffset;
-  payload: { vector: Vector };
-}
+export const createTranslateOffsetAction = vectorActionCreatorFactory<
+  ActionTypes.translateOffset
+>(ActionTypes.translateOffset);
 
-export function translateOffset(x: number, y: number): TranslateOffsetAction {
-  return {
-    type: ActionTypes.translateOffset,
-    payload: { vector: { x, y } }
-  };
-}
+export type TranslateSelectorAction = VectorAction<
+  ActionTypes.translateSelector
+>;
 
-export interface TranslateSelectorAction {
-  type: ActionTypes.translateSelector;
-  payload: { vector: Vector };
-}
-
-export function translateSelector(
-  x: number,
-  y: number
-): TranslateSelectorAction {
-  return {
-    type: ActionTypes.translateSelector,
-    payload: { vector: { x, y } }
-  };
-}
+export const createaTranslateSelectorAction = vectorActionCreatorFactory<
+  ActionTypes.translateSelector
+>(ActionTypes.translateSelector);

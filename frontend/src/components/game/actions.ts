@@ -1,7 +1,11 @@
-import { Vector } from "../grid/actions";
+import {
+  VectorAction,
+  vectorActionCreatorFactory
+} from "../../common/vectorActionFactory";
 
 export enum ActionTypes {
   selectSquare = "SELECT_SQUARE",
+  deselectSquare = "DESELECT_SQUARE",
   placeSquare = "PLACE_SQUARE",
   clearSelected = "DISCARD_SELECTED"
 }
@@ -11,29 +15,17 @@ export type GameActions =
   | PlaceSquareAction
   | ClearSelectedAction;
 
-export interface SelectSquareAction {
-  type: ActionTypes.selectSquare;
-  payload: { vector: Vector };
-}
+export type SelectSquareAction = VectorAction<ActionTypes.selectSquare>;
 
-export function selectSquare(vector: Vector): SelectSquareAction {
-  return {
-    type: ActionTypes.selectSquare,
-    payload: { vector }
-  };
-}
+export const createSelectSquareAction = vectorActionCreatorFactory<
+  ActionTypes.selectSquare
+>(ActionTypes.selectSquare);
 
-export interface PlaceSquareAction {
-  type: ActionTypes.placeSquare;
-  payload: { vector: Vector };
-}
+export type PlaceSquareAction = VectorAction<ActionTypes.placeSquare>;
 
-export function placeSquare(vector: Vector): PlaceSquareAction {
-  return {
-    type: ActionTypes.placeSquare,
-    payload: { vector }
-  };
-}
+export const createPlaceSquareAction = vectorActionCreatorFactory<
+  ActionTypes.placeSquare
+>(ActionTypes.placeSquare);
 
 export interface ClearSelectedAction {
   type: ActionTypes.clearSelected;

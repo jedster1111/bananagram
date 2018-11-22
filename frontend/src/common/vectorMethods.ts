@@ -1,4 +1,7 @@
-import { Vector } from "../components/grid/actions";
+export interface Vector {
+  x: number;
+  y: number;
+}
 
 /**
  * Returns a vector

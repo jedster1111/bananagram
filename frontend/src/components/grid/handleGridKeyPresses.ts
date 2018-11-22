@@ -1,10 +1,13 @@
-import { createVector, translateVector } from "../../common/vectorMethods";
-import { GameActions, selectSquare } from "../game/actions";
 import {
-  GridActions,
-  translateOffset,
-  translateSelector,
+  createVector,
+  translateVector,
   Vector
+} from "../../common/vectorMethods";
+import { createSelectSquareAction, GameActions } from "../game/actions";
+import {
+  createaTranslateSelectorAction,
+  createTranslateOffsetAction,
+  GridActions
 } from "./actions";
 import { Dimensions } from "./Grid";
 
@@ -21,43 +24,43 @@ export function handleKeyPresses(
 
   switch (event.key) {
     case "ArrowUp": {
-      const { x, y } = createVector(0, -1);
+      const vector = createVector(0, -1);
       if (isCtrlPressed) {
-        gridDispatch(translateOffset(x, y));
+        gridDispatch(createTranslateOffsetAction(vector));
       } else if (absY !== 0) {
-        gridDispatch(translateSelector(x, y));
+        gridDispatch(createaTranslateSelectorAction(vector));
       }
       break;
     }
     case "ArrowRight": {
-      const { x, y } = createVector(1, 0);
+      const vector = createVector(1, 0);
       if (isCtrlPressed) {
-        gridDispatch(translateOffset(x, y));
+        gridDispatch(createTranslateOffsetAction(vector));
       } else if (absX !== dimensions.width - 1) {
-        gridDispatch(translateSelector(x, y));
+        gridDispatch(createaTranslateSelectorAction(vector));
       }
       break;
     }
     case "ArrowDown": {
-      const { x, y } = createVector(0, 1);
+      const vector = createVector(0, 1);
       if (isCtrlPressed) {
-        gridDispatch(translateOffset(x, y));
+        gridDispatch(createTranslateOffsetAction(vector));
       } else if (absY !== dimensions.height - 1) {
-        gridDispatch(translateSelector(x, y));
+        gridDispatch(createaTranslateSelectorAction(vector));
       }
       break;
     }
     case "ArrowLeft": {
-      const { x, y } = createVector(-1, 0);
+      const vector = createVector(-1, 0);
       if (isCtrlPressed) {
-        gridDispatch(translateOffset(x, y));
+        gridDispatch(createTranslateOffsetAction(vector));
       } else if (absX !== 0) {
-        gridDispatch(translateSelector(x, y));
+        gridDispatch(createaTranslateSelectorAction(vector));
       }
       break;
     }
     case "Enter": {
-      gameDispatch(selectSquare(hoveredSquare));
+      gameDispatch(createSelectSquareAction(hoveredSquare));
       break;
     }
     default: {

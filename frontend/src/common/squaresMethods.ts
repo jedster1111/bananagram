@@ -1,5 +1,5 @@
 import { Squares } from "../components/game/Game";
-import { Vector } from "../components/grid/actions";
+import { Vector } from "./vectorMethods";
 
 export function setSquareValue(
   vector: Vector,
