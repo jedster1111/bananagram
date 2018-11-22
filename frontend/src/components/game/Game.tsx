@@ -1,9 +1,21 @@
 import * as React from "react";
 import styled from "styled-components";
+import { Vector } from "../../common/vectorMethods";
 import Grid from "../grid/Grid";
 import { GameActions } from "./actions";
 import { handleGameKeyPresses } from "./handleGameKeyPresses";
-import { getInitialState, reducer, State } from "./reducer";
+import { createInitialState, reducer } from "./reducer";
+
+export interface State {
+  squares: Squares;
+  selected: Selected | undefined;
+  error: string | undefined;
+}
+
+export interface Selected {
+  originalPosition: Vector;
+  squares: Squares;
+}
 
 export interface Squares {
   [column: number]:
@@ -20,7 +32,7 @@ const GameInfoContainer = styled.div`
 const Game: React.FunctionComponent<{}> = props => {
   const [state, dispatch] = React.useReducer<State, GameActions>(
     reducer,
-    getInitialState()
+    createInitialState()
   );
 
   React.useEffect(() => {

@@ -1,20 +1,8 @@
 import { getValueInSquares, setSquareValue } from "../../common/squaresMethods";
-import { Vector } from "../../common/vectorMethods";
 import { ActionTypes, GameActions } from "./actions";
-import { Squares } from "./Game";
+import { State } from "./Game";
 
-export interface Selected {
-  originalPosition: Vector;
-  squares: Squares;
-}
-
-export interface State {
-  squares: Squares;
-  selected: Selected | undefined;
-  error: string | undefined;
-}
-
-export function getInitialState(): State {
+export function createInitialState(): State {
   return {
     selected: undefined,
     squares: {

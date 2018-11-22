@@ -9,8 +9,7 @@ import {
   Vector
 } from "../../common/vectorMethods";
 import { GameActions } from "../game/actions";
-import { Squares } from "../game/Game";
-import { Selected } from "../game/reducer";
+import { Selected, Squares } from "../game/Game";
 import { GridActions } from "./actions";
 import { handleKeyPresses } from "./handleGridKeyPresses";
 import { createInitialState, reducer } from "./reducer";
