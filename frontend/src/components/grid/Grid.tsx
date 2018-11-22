@@ -1,14 +1,11 @@
 import * as React from "react";
 import styled from "styled-components";
-import {
-  doesVectorExistInSquares,
-  getValue
-} from "../../common/squaresMethods";
+import { getValueInSquares } from "../../common/squaresMethods";
 import {
   createVector,
-  inverse,
+  inverseVector,
   isSameVector,
-  translate
+  translateVector
 } from "../../common/vectorMethods";
 import { GameActions } from "../game/actions";
 import { Squares } from "../game/Game";
@@ -93,7 +90,7 @@ function renderGrid(
   squares: Squares,
   offset: Vector,
   hoveredSquare: Vector,
-  selectedSquares: Selected | undefined
+  pickedSquares: Selected | undefined
 ) {
   const rows: SquareProps[][] = [];
 
@@ -102,19 +99,24 @@ function renderGrid(
 
     for (let x = 0; x < width; x++) {
       const relativePosition = createVector(x, y);
-      const absolutePosition = translate(relativePosition, inverse(offset));
+      const absolutePosition = translateVector(
+        relativePosition,
+        inverseVector(offset)
+      );
 
       const isHovered = isSameVector(absolutePosition, hoveredSquare);
       const isPicked =
-        !!selectedSquares &&
-        doesVectorExistInSquares(absolutePosition, selectedSquares.squares);
+        !!pickedSquares &&
+        !!getValueInSquares(absolutePosition, pickedSquares.squares);
 
       const isOriginalPosPicked =
-        !!selectedSquares &&
-        isSameVector(selectedSquares.originalPosition, absolutePosition);
+        !!pickedSquares &&
+        isSameVector(pickedSquares.originalPosition, absolutePosition);
+
+      const value = getValueInSquares(absolutePosition, squares);
 
       row.push({
-        value: getValue(absolutePosition, squares),
+        value,
         isHovered,
         isPicked,
         isOriginalPosPicked

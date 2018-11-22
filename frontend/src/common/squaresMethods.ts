@@ -39,21 +39,13 @@ export function deepCloneSquaresColumns(
  * getValue({x: 1, y: 2}, {1: {2: "A", 3:"B"}}) // --> "A"
  * getValue({x: 0, y: 2}), {1: {2: "A", 3: "B"}} // --> undefined
  */
-export function getValue(vector: Vector, squares: Squares): string | undefined {
+export function getValueInSquares(
+  vector: Vector,
+  squares: Squares
+): string | undefined {
   const column = squares[vector.x];
   if (!column) {
     return undefined;
   }
   return column[vector.y];
-}
-
-export function doesVectorExistInSquares(
-  { x, y }: Vector,
-  squares: Squares | undefined
-): boolean {
-  return (
-    squares !== undefined &&
-    squares[x] !== undefined &&
-    squares[x]![y] !== undefined // why do I need ! here, is there a way around it
-  );
 }

@@ -1,4 +1,4 @@
-import { createVector, translate } from "../../common/vectorMethods";
+import { createVector, translateVector } from "../../common/vectorMethods";
 import { GameActions, selectSquare } from "../game/actions";
 import {
   GridActions,
@@ -17,68 +17,51 @@ export function handleKeyPresses(
   dimensions: Dimensions
 ) {
   const isCtrlPressed = event.getModifierState("Control");
+  const { x: absX, y: absY } = translateVector(hoveredSquare, offset);
 
-  if (isCtrlPressed) {
-    switch (event.key) {
-      case "ArrowUp": {
-        const { x, y } = createVector(0, -1);
+  switch (event.key) {
+    case "ArrowUp": {
+      const { x, y } = createVector(0, -1);
+      if (isCtrlPressed) {
         gridDispatch(translateOffset(x, y));
-        break;
+      } else if (absY !== 0) {
+        gridDispatch(translateSelector(x, y));
       }
-      case "ArrowRight": {
-        const { x, y } = createVector(1, 0);
-        gridDispatch(translateOffset(x, y));
-        break;
-      }
-      case "ArrowDown": {
-        const { x, y } = createVector(0, 1);
-        gridDispatch(translateOffset(x, y));
-        break;
-      }
-      case "ArrowLeft": {
-        const { x, y } = createVector(-1, 0);
-        gridDispatch(translateOffset(x, y));
-        break;
-      }
+      break;
     }
-  } else {
-    const { x: absX, y: absY } = translate(hoveredSquare, offset);
-    switch (event.key) {
-      case "ArrowUp": {
-        const { x, y } = createVector(0, -1);
-        if (absY !== 0) {
-          gridDispatch(translateSelector(x, y));
-        }
-        break;
+    case "ArrowRight": {
+      const { x, y } = createVector(1, 0);
+      if (isCtrlPressed) {
+        gridDispatch(translateOffset(x, y));
+      } else if (absX !== dimensions.width - 1) {
+        gridDispatch(translateSelector(x, y));
       }
-      case "ArrowRight": {
-        const { x, y } = createVector(1, 0);
-        if (absX !== dimensions.width - 1) {
-          gridDispatch(translateSelector(x, y));
-        }
-        break;
+      break;
+    }
+    case "ArrowDown": {
+      const { x, y } = createVector(0, 1);
+      if (isCtrlPressed) {
+        gridDispatch(translateOffset(x, y));
+      } else if (absY !== dimensions.height - 1) {
+        gridDispatch(translateSelector(x, y));
       }
-      case "ArrowDown": {
-        const { x, y } = createVector(0, 1);
-        if (absY !== dimensions.height - 1) {
-          gridDispatch(translateSelector(x, y));
-        }
-        break;
+      break;
+    }
+    case "ArrowLeft": {
+      const { x, y } = createVector(-1, 0);
+      if (isCtrlPressed) {
+        gridDispatch(translateOffset(x, y));
+      } else if (absX !== 0) {
+        gridDispatch(translateSelector(x, y));
       }
-      case "ArrowLeft": {
-        const { x, y } = createVector(-1, 0);
-        if (absX !== 0) {
-          gridDispatch(translateSelector(x, y));
-        }
-        break;
-      }
-      case "Enter": {
-        gameDispatch(selectSquare(hoveredSquare));
-        break;
-      }
-      default: {
-        break;
-      }
+      break;
+    }
+    case "Enter": {
+      gameDispatch(selectSquare(hoveredSquare));
+      break;
+    }
+    default: {
+      break;
     }
   }
 }

@@ -1,4 +1,4 @@
-import { getValue, setSquareValue } from "../../common/squaresMethods";
+import { getValueInSquares, setSquareValue } from "../../common/squaresMethods";
 import { Vector } from "../grid/actions";
 import { ActionTypes, GameActions } from "./actions";
 import { Squares } from "./Game";
@@ -32,7 +32,7 @@ export function reducer(currentState: State, action: GameActions): State {
     case ActionTypes.selectSquare: {
       const selectedSquare = action.payload.vector;
 
-      const selectedSquareValue = getValue(
+      const selectedSquareValue = getValueInSquares(
         selectedSquare,
         currentState.squares
       );
@@ -73,7 +73,7 @@ export function reducer(currentState: State, action: GameActions): State {
 
     case ActionTypes.clearSelected: {
       console.log("Cleared selected!");
-      return { ...currentState, selected: undefined };
+      return { ...currentState, selected: undefined, error: undefined };
     }
 
     case ActionTypes.placeSquare: {

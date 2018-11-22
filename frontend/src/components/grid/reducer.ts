@@ -1,4 +1,8 @@
-import { createVector, inverse, translate } from "../../common/vectorMethods";
+import {
+  createVector,
+  inverseVector,
+  translateVector
+} from "../../common/vectorMethods";
 import { ActionTypes, GridActions, Vector } from "./actions";
 
 export interface State {
@@ -19,13 +23,16 @@ export function reducer(currentState: State, action: GridActions): State {
       const vector = action.payload.vector;
       return {
         ...currentState,
-        offset: translate(currentState.offset, vector),
-        hoveredSquare: translate(currentState.hoveredSquare, inverse(vector)) // prevent selected square from moving
+        offset: translateVector(currentState.offset, vector),
+        hoveredSquare: translateVector(
+          currentState.hoveredSquare,
+          inverseVector(vector)
+        ) // prevent selected square from moving
       };
     }
 
     case ActionTypes.translateSelector: {
-      const newActualPosition = translate(
+      const newActualPosition = translateVector(
         currentState.hoveredSquare,
         action.payload.vector
       );

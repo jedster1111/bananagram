@@ -1,23 +1,36 @@
 import { Squares } from "../../components/game/Game";
-import { doesVectorExistInSquares } from "../squaresMethods";
+import { setSquareValue } from "../squaresMethods";
 import { createVector } from "../vectorMethods";
 
-describe("Testing  doesVectorExistInSquares", () => {
-  const squares: Squares = {
-    1: {
-      2: "A"
-    }
-  };
+describe("Testing setSquareValue", () => {
+  it("should return the same squares but with an replaced value", () => {
+    const inputSquare = createSquares();
+    const outputSquare = createSquares();
+    outputSquare[1]![2] = "C";
 
-  it("should return true if vector is inside of Squares", () => {
-    expect(doesVectorExistInSquares(createVector(1, 2), squares)).toBe(true);
+    expect(setSquareValue(createVector(1, 2), "C", inputSquare)).toEqual(
+      outputSquare
+    );
   });
 
-  it("should return false if vector is not inside of Square", () => {
-    expect(doesVectorExistInSquares(createVector(1, 3), squares)).toBe(false);
-  });
+  it("should return squares with a new value", () => {
+    const inputSquare = createSquares();
+    const outputSquare = createSquares();
+    outputSquare[1]![20] = "A";
 
-  it("should return false if Squares are undefined", () => {
-    expect(doesVectorExistInSquares(createVector(1, 5), undefined)).toBe(false);
+    expect(setSquareValue(createVector(1, 20), "A", inputSquare)).toEqual(
+      outputSquare
+    );
   });
 });
+
+function createSquares(): Squares {
+  return {
+    1: {
+      2: "A"
+    },
+    2: {
+      3: "B"
+    }
+  };
+}

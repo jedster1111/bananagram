@@ -14,7 +14,7 @@ export function createVector(x: number, y: number): Vector {
  * @example
  * translate({x: 1, y: 2}, {x: 5, y: -4}) // --> {x: 6, y: -2}
  */
-export function translate(vectorA: Vector, vectorB: Vector): Vector {
+export function translateVector(vectorA: Vector, vectorB: Vector): Vector {
   return {
     x: vectorA.x + vectorB.x,
     y: vectorA.y + vectorB.y
@@ -27,11 +27,8 @@ export function translate(vectorA: Vector, vectorB: Vector): Vector {
  * @example
  * inverse({x: 1, y: 4}) // --> {x: -1, y: -4}
  */
-export function inverse(vector: Vector): Vector {
-  const inverseVector = { ...vector };
-  inverseVector.x *= -1;
-  inverseVector.y *= -1;
-  return inverseVector;
+export function inverseVector({ x, y }: Vector): Vector {
+  return { x: x * -1, y: y * -1 };
 }
 
 /**
