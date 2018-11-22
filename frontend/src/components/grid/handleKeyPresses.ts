@@ -12,7 +12,7 @@ export function handleKeyPresses(
   event: KeyboardEvent,
   gridDispatch: React.Dispatch<GridActions>,
   gameDispatch: React.Dispatch<GameActions>,
-  selectedSquare: Vector,
+  hoveredSquare: Vector,
   offset: Vector,
   dimensions: Dimensions
 ) {
@@ -42,7 +42,7 @@ export function handleKeyPresses(
       }
     }
   } else {
-    const { x: absX, y: absY } = translate(selectedSquare, offset);
+    const { x: absX, y: absY } = translate(hoveredSquare, offset);
     switch (event.key) {
       case "ArrowUp": {
         const { x, y } = createVector(0, -1);
@@ -73,7 +73,7 @@ export function handleKeyPresses(
         break;
       }
       case "Enter": {
-        gameDispatch(selectSquare(selectedSquare));
+        gameDispatch(selectSquare(hoveredSquare));
         break;
       }
       default: {

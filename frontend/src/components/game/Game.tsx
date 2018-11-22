@@ -32,8 +32,6 @@ const Game: React.FunctionComponent<{}> = props => {
     };
   });
 
-  const isSelected = !!state.selected;
-
   return (
     <>
       <GameInfoContainer>
@@ -45,8 +43,7 @@ const Game: React.FunctionComponent<{}> = props => {
       <Grid
         squares={state.squares}
         dimensions={{ width: 10, height: 10 }}
-        isSelected={isSelected}
-        pickedSquare={state.selected && state.selected.originalPosition}
+        selectedSquares={state.selected}
         gameDispatch={dispatch}
       />
     </>

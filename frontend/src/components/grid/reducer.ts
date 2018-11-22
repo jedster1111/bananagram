@@ -3,13 +3,13 @@ import { ActionTypes, GridActions, Vector } from "./actions";
 
 export interface State {
   offset: Vector;
-  selectedSquare: Vector;
+  hoveredSquare: Vector;
 }
 
 export function getInitialState(): State {
   return {
     offset: createVector(0, 0),
-    selectedSquare: createVector(0, 0)
+    hoveredSquare: createVector(0, 0)
   };
 }
 
@@ -20,19 +20,19 @@ export function reducer(currentState: State, action: GridActions): State {
       return {
         ...currentState,
         offset: translate(currentState.offset, vector),
-        selectedSquare: translate(currentState.selectedSquare, inverse(vector)) // prevent selected square from moving
+        hoveredSquare: translate(currentState.hoveredSquare, inverse(vector)) // prevent selected square from moving
       };
     }
 
     case ActionTypes.translateSelector: {
       const newActualPosition = translate(
-        currentState.selectedSquare,
+        currentState.hoveredSquare,
         action.payload.vector
       );
 
       return {
         ...currentState,
-        selectedSquare: newActualPosition
+        hoveredSquare: newActualPosition
       };
     }
     default:

@@ -46,3 +46,14 @@ export function getValue(vector: Vector, squares: Squares): string | undefined {
   }
   return column[vector.y];
 }
+
+export function doesVectorExistInSquares(
+  { x, y }: Vector,
+  squares: Squares | undefined
+): boolean {
+  return (
+    squares !== undefined &&
+    squares[x] !== undefined &&
+    squares[x]![y] !== undefined // why do I need ! here, is there a way around it
+  );
+}

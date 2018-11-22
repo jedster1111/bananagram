@@ -5,10 +5,14 @@ export interface SquareProps {
   value: string | undefined;
   isHovered: boolean;
   isPicked: boolean;
+  isOriginalPosPicked: boolean;
 }
 
-const SquareContainer = styled.div<{ isSelected: boolean; isPicked: boolean }>`
-  transition: border-color 0.5s;
+const SquareContainer = styled.div<{
+  isHovered: boolean;
+  isPicked: boolean;
+  isOriginalPosPicked: boolean;
+}>`
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -16,18 +20,23 @@ const SquareContainer = styled.div<{ isSelected: boolean; isPicked: boolean }>`
   float: left;
   width: 50px;
   height: 50px;
-  border: ${props => (props.isSelected ? "solid 2px black" : "solid 1px grey")};
+  border: ${props => (props.isHovered ? "solid 2px black" : "solid 1px grey")};
   margin: 3px;
-  border-color: ${props => (props.isPicked ? "red" : "grey")};
-  // opacity: ${props => (props.isPicked ? "0.3" : "1")};
+  border-color: ${props =>
+    props.isPicked ? (props.isOriginalPosPicked ? "blue" : "red") : undefined};
 `;
 
 const Square: React.FunctionComponent<SquareProps> = ({
   value,
   isHovered,
-  isPicked
+  isPicked,
+  isOriginalPosPicked
 }) => (
-  <SquareContainer isSelected={isHovered} isPicked={isPicked}>
+  <SquareContainer
+    isHovered={isHovered}
+    isPicked={isPicked}
+    isOriginalPosPicked={isOriginalPosPicked}
+  >
     {value}
   </SquareContainer>
 );

@@ -1,6 +1,9 @@
 import * as React from "react";
 import styled from "styled-components";
-import { getValue } from "../../common/squaresMethods";
+import {
+  doesVectorExistInSquares,
+  getValue
+} from "../../common/squaresMethods";
 import {
   createVector,
   inverse,
@@ -9,6 +12,7 @@ import {
 } from "../../common/vectorMethods";
 import { GameActions } from "../game/actions";
 import { Squares } from "../game/Game";
+import { Selected } from "../game/reducer";
 import { GridActions, Vector } from "./actions";
 import { handleKeyPresses } from "./handleKeyPresses";
 import { getInitialState, reducer, State } from "./reducer";
@@ -22,8 +26,7 @@ export interface Dimensions {
 interface GridProps {
   squares: Squares;
   dimensions: Dimensions;
-  isSelected: boolean;
-  pickedSquare: Vector | undefined;
+  selectedSquares: Selected | undefined;
   gameDispatch: React.Dispatch<GameActions>;
 }
 
@@ -49,7 +52,7 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         event,
         dispatch,
         props.gameDispatch,
-        state.selectedSquare,
+        state.hoveredSquare,
         state.offset,
         props.dimensions
       );
@@ -67,7 +70,7 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         Offset: {state.offset.x}, {state.offset.y}
       </p>
       <p>
-        Current Selection: {state.selectedSquare.x}, {state.selectedSquare.y}
+        Current Selection: {state.hoveredSquare.x}, {state.hoveredSquare.y}
       </p>
       <p>
         Use <code>ctlr & arrow keys</code> to navigate
@@ -77,8 +80,8 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         height,
         props.squares,
         state.offset,
-        state.selectedSquare,
-        props.pickedSquare
+        state.hoveredSquare,
+        props.selectedSquares
       )}
     </div>
   );
@@ -90,7 +93,7 @@ function renderGrid(
   squares: Squares,
   offset: Vector,
   hoveredSquare: Vector,
-  pickedSquare: Vector | undefined
+  selectedSquares: Selected | undefined
 ) {
   const rows: SquareProps[][] = [];
 
@@ -103,12 +106,18 @@ function renderGrid(
 
       const isHovered = isSameVector(absolutePosition, hoveredSquare);
       const isPicked =
-        !!pickedSquare && isSameVector(absolutePosition, pickedSquare);
+        !!selectedSquares &&
+        doesVectorExistInSquares(absolutePosition, selectedSquares.squares);
+
+      const isOriginalPosPicked =
+        !!selectedSquares &&
+        isSameVector(selectedSquares.originalPosition, absolutePosition);
 
       row.push({
         value: getValue(absolutePosition, squares),
         isHovered,
-        isPicked
+        isPicked,
+        isOriginalPosPicked
       });
     }
 
