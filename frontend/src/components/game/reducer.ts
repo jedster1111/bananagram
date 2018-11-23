@@ -4,7 +4,8 @@ import { State } from "./Game";
 
 export function createInitialState(): State {
   return {
-    selected: undefined,
+    gridSelected: undefined,
+    handSelected: undefined,
     squares: {
       2: { 5: "W" },
       3: { 1: "H", 2: "E", 3: "L", 4: "L", 5: "O" },
@@ -20,10 +21,10 @@ export function createInitialState(): State {
 export function reducer(currentState: State, action: GameActions): State {
   switch (action.type) {
     case ActionTypes.selectSquare: {
-      const selectedSquare = action.payload.vector;
+      const selectedSquareVector = action.payload.vector;
 
       const selectedSquareValue = getValueInSquares(
-        selectedSquare,
+        selectedSquareVector,
         currentState.squares
       );
 
@@ -35,44 +36,61 @@ export function reducer(currentState: State, action: GameActions): State {
       }
 
       const originalPosition =
-        currentState.selected === undefined
-          ? selectedSquare
-          : currentState.selected.originalPosition;
+        currentState.gridSelected === undefined
+          ? selectedSquareVector
+          : currentState.gridSelected.originalPosition;
 
       const newSquares =
-        currentState.selected === undefined
-          ? setSquareValue(selectedSquare, selectedSquareValue, {})
+        currentState.gridSelected === undefined
+          ? setSquareValue(selectedSquareVector, selectedSquareValue, {})
           : setSquareValue(
-              selectedSquare,
+              selectedSquareVector,
               selectedSquareValue,
-              currentState.selected.squares
+              currentState.gridSelected.squares
             );
 
       console.log(newSquares);
 
       return {
         ...currentState,
-        selected: {
-          ...currentState.selected,
+        gridSelected: {
+          ...currentState.gridSelected,
           originalPosition,
           squares: newSquares
         },
+        handSelected: undefined,
         error: undefined
       };
     }
 
     case ActionTypes.clearSelected: {
-      console.log("Cleared selected!");
-      return { ...currentState, selected: undefined, error: undefined };
+      console.log("Just cleared all selected squares!");
+      return {
+        ...currentState,
+        gridSelected: undefined,
+        handSelected: undefined,
+        error: undefined
+      };
     }
 
     case ActionTypes.makeActive: {
-      console.log(action.payload.makeActive);
+      console.log(`Making ${action.payload.makeActive} active!`);
       return { ...currentState, active: action.payload.makeActive };
     }
 
     case ActionTypes.placeSquare: {
       return currentState;
+    }
+
+    case ActionTypes.selectHandSquare: {
+      return {
+        ...currentState,
+        handSelected: {
+          ...currentState.handSelected,
+          index: action.payload.index
+        },
+        gridSelected: undefined
+      };
     }
 
     default: {

@@ -9,11 +9,13 @@ export enum ActionTypes {
   deselectSquare = "DESELECT_SQUARE",
   placeSquare = "PLACE_SQUARE",
   clearSelected = "DISCARD_SELECTED",
-  makeActive = "MAKE_ACTIVE"
+  makeActive = "MAKE_ACTIVE",
+  selectHandSquare = "SELECT_HAND_SQUARE"
 }
 
 export type GameActions =
   | SelectSquareAction
+  | SelectHandSquareAction
   | PlaceSquareAction
   | ClearSelectedAction
   | MakeActiveAction;
@@ -51,5 +53,19 @@ export function createMakeActiveAction(
   return {
     type: ActionTypes.makeActive,
     payload: { makeActive }
+  };
+}
+
+export interface SelectHandSquareAction {
+  type: ActionTypes.selectHandSquare;
+  payload: { index: number };
+}
+
+export function createSelectHandSquareAction(
+  index: number
+): SelectHandSquareAction {
+  return {
+    type: ActionTypes.selectHandSquare,
+    payload: { index }
   };
 }

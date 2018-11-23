@@ -9,7 +9,7 @@ import {
   Vector
 } from "../../common/vectorMethods";
 import { GameActions } from "../game/actions";
-import { Selected, Squares } from "../game/Game";
+import { GridSelected, Squares } from "../game/Game";
 import { GridActions } from "./actions";
 import { handleKeyPresses } from "./handleGridKeyPresses";
 import { createInitialState, reducer } from "./reducer";
@@ -28,7 +28,7 @@ export interface Dimensions {
 interface GridProps {
   squares: Squares;
   dimensions: Dimensions;
-  selectedSquares: Selected | undefined;
+  selectedSquares: GridSelected | undefined;
   gameDispatch: React.Dispatch<GameActions>;
   isGameActive: boolean;
 }
@@ -101,7 +101,7 @@ function renderGrid(
   squares: Squares,
   offset: Vector,
   hoveredSquare: Vector,
-  pickedSquares: Selected | undefined,
+  pickedSquares: GridSelected | undefined,
   isGameActive: boolean
 ) {
   const rows: SquareProps[][] = [];

@@ -1,8 +1,10 @@
+import { createSelectHandSquareAction, GameActions } from "../game/actions";
 import { createMoveSelectorAction, HandActions } from "./actions";
 
 export function handleHandKeyPresses(
   event: KeyboardEvent,
   handDispatch: React.Dispatch<HandActions>,
+  gameDispatch: React.Dispatch<GameActions>,
   isActive: boolean,
   hoveredSquareIndex: number,
   handCount: number
@@ -24,6 +26,10 @@ export function handleHandKeyPresses(
         handDispatch(createMoveSelectorAction(1));
       }
       break;
+    }
+
+    case "Enter": {
+      gameDispatch(createSelectHandSquareAction(hoveredSquareIndex));
     }
 
     default: {

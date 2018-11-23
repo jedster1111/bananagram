@@ -9,7 +9,8 @@ import { createInitialState, reducer } from "./reducer";
 
 export interface State {
   squares: Squares;
-  selected: Selected | undefined;
+  gridSelected: GridSelected | undefined;
+  handSelected: HandSelected | undefined;
   error: string | undefined;
   handSquares: string[];
   active: ActiveTypes;
@@ -17,9 +18,13 @@ export interface State {
 
 export type ActiveTypes = "hand" | "grid";
 
-export interface Selected {
+export interface GridSelected {
   originalPosition: Vector;
   squares: Squares;
+}
+
+export interface HandSelected {
+  index: number;
 }
 
 export interface Squares {
@@ -62,11 +67,18 @@ const Game: React.FunctionComponent<{}> = props => {
       <Grid
         squares={state.squares}
         dimensions={{ width: 10, height: 10 }}
-        selectedSquares={state.selected}
+        selectedSquares={state.gridSelected}
         gameDispatch={dispatch}
         isGameActive={isGridActive}
       />
-      <Hand handSquares={state.handSquares} isHandActive={!isGridActive} />
+      <Hand
+        handSquares={state.handSquares}
+        isHandActive={!isGridActive}
+        gameDispatch={dispatch}
+        selectedIndex={
+          state.handSelected ? state.handSelected.index : undefined
+        }
+      />
     </>
   );
 };

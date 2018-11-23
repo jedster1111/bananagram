@@ -1,5 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
+import { GameActions } from "../game/actions";
 import { HandActions } from "./actions";
 import { handleHandKeyPresses } from "./handleHandKeyPresses";
 import { createInitialState, reducer } from "./reducer";
@@ -11,6 +12,8 @@ export interface State {
 interface HandProps {
   handSquares: string[];
   isHandActive: boolean;
+  gameDispatch: React.Dispatch<GameActions>;
+  selectedIndex: number | undefined;
 }
 
 const HandContainer = styled.div`
@@ -22,7 +25,11 @@ const HandContainer = styled.div`
   background-color: lightgreen;
 `;
 
-const Square = styled.div<{ isHovered: boolean; isHandActive: boolean }>`
+const Square = styled.div<{
+  isHovered: boolean;
+  isSelected: boolean;
+  isHandActive: boolean;
+}>`
   box-sizing: border-box;
   display: flex;
   justify-content: center;
@@ -31,6 +38,7 @@ const Square = styled.div<{ isHovered: boolean; isHandActive: boolean }>`
   height: 50px;
   border: ${({ isHovered, isHandActive }) =>
     isHovered && isHandActive ? "solid black 2px" : "solid grey 1px"};
+  border-color: ${({ isSelected }) => isSelected && "red"};
   margin: 3px;
   background-color: white;
 `;
@@ -48,6 +56,7 @@ const Hand: React.FC<HandProps> = props => {
       handleHandKeyPresses(
         event,
         dispatch,
+        props.gameDispatch,
         props.isHandActive,
         state.hoveredSquareIndex,
         handCount
@@ -63,8 +72,13 @@ const Hand: React.FC<HandProps> = props => {
     <HandContainer>
       {props.handSquares.map((square, index) => {
         const isHovered = index === state.hoveredSquareIndex;
+        const isSelected = index === props.selectedIndex;
         return (
-          <Square isHovered={isHovered} isHandActive={props.isHandActive}>
+          <Square
+            isHovered={isHovered}
+            isHandActive={props.isHandActive}
+            isSelected={isSelected}
+          >
             {square}
           </Square>
         );
