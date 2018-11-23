@@ -17,8 +17,13 @@ export function handleKeyPresses(
   gameDispatch: React.Dispatch<GameActions>,
   hoveredSquare: Vector,
   offset: Vector,
-  dimensions: Dimensions
+  dimensions: Dimensions,
+  isActive: boolean
 ) {
+  if (!isActive) {
+    return;
+  }
+
   const isCtrlPressed = event.getModifierState("Control");
   const { x: absX, y: absY } = translateVector(hoveredSquare, offset);
 

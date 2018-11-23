@@ -11,7 +11,9 @@ export function createInitialState(): State {
       4: { 3: "O", 5: "W" },
       5: { 3: "L" }
     },
-    error: undefined
+    error: undefined,
+    handSquares: ["B", "A", "N", "A", "N", "A"],
+    active: "hand"
   };
 }
 
@@ -62,6 +64,11 @@ export function reducer(currentState: State, action: GameActions): State {
     case ActionTypes.clearSelected: {
       console.log("Cleared selected!");
       return { ...currentState, selected: undefined, error: undefined };
+    }
+
+    case ActionTypes.makeActive: {
+      console.log(action.payload.makeActive);
+      return { ...currentState, active: action.payload.makeActive };
     }
 
     case ActionTypes.placeSquare: {

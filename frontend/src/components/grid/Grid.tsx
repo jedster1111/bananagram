@@ -30,11 +30,15 @@ interface GridProps {
   dimensions: Dimensions;
   selectedSquares: Selected | undefined;
   gameDispatch: React.Dispatch<GameActions>;
+  isGameActive: boolean;
 }
 
 const SquaresContainer = styled.div`
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
+  border: solid 1px black;
+  background-color: lightgreen;
+  padding: 3px;
 `;
 
 const RowContainer = styled.div`
@@ -56,7 +60,8 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         props.gameDispatch,
         state.hoveredSquare,
         state.offset,
-        props.dimensions
+        props.dimensions,
+        props.isGameActive
       );
     window.document.addEventListener("keydown", onKeyPress);
     return () => {
@@ -83,7 +88,8 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         props.squares,
         state.offset,
         state.hoveredSquare,
-        props.selectedSquares
+        props.selectedSquares,
+        props.isGameActive
       )}
     </div>
   );
@@ -95,7 +101,8 @@ function renderGrid(
   squares: Squares,
   offset: Vector,
   hoveredSquare: Vector,
-  pickedSquares: Selected | undefined
+  pickedSquares: Selected | undefined,
+  isGameActive: boolean
 ) {
   const rows: SquareProps[][] = [];
 
@@ -124,7 +131,8 @@ function renderGrid(
         value,
         isHovered,
         isPicked,
-        isOriginalPosPicked
+        isOriginalPosPicked,
+        isGameActive
       });
     }
 

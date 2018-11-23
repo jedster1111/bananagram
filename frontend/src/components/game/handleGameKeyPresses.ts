@@ -1,13 +1,22 @@
 import { Dispatch } from "react";
-import { clearSelected, GameActions } from "./actions";
+import {
+  createClearSelectedAction,
+  createMakeActiveAction,
+  GameActions
+} from "./actions";
 
 export function handleGameKeyPresses(
   event: KeyboardEvent,
-  dispatch: Dispatch<GameActions>
+  dispatch: Dispatch<GameActions>,
+  isGridActive: boolean
 ) {
   switch (event.key) {
+    case " ": {
+      dispatch(createMakeActiveAction(isGridActive ? "hand" : "grid"));
+      break;
+    }
     case "Escape": {
-      dispatch(clearSelected());
+      dispatch(createClearSelectedAction());
       break;
     }
     default: {

@@ -6,12 +6,14 @@ export interface SquareProps {
   isHovered: boolean;
   isPicked: boolean;
   isOriginalPosPicked: boolean;
+  isGameActive: boolean;
 }
 
 const SquareContainer = styled.div<{
   isHovered: boolean;
   isPicked: boolean;
   isOriginalPosPicked: boolean;
+  isGameActive: boolean;
 }>`
   box-sizing: border-box;
   display: flex;
@@ -20,22 +22,26 @@ const SquareContainer = styled.div<{
   float: left;
   width: 50px;
   height: 50px;
-  border: ${props => (props.isHovered ? "solid 2px black" : "solid 1px grey")};
+  border: ${({ isHovered, isGameActive }) =>
+    isHovered && isGameActive ? "solid 2px black" : "solid 1px grey"};
   margin: 3px;
   border-color: ${props =>
     props.isPicked ? (props.isOriginalPosPicked ? "blue" : "red") : undefined};
+  background-color: white;
 `;
 
 const Square: React.FunctionComponent<SquareProps> = ({
   value,
   isHovered,
   isPicked,
-  isOriginalPosPicked
+  isOriginalPosPicked,
+  isGameActive
 }) => (
   <SquareContainer
     isHovered={isHovered}
     isPicked={isPicked}
     isOriginalPosPicked={isOriginalPosPicked}
+    isGameActive={isGameActive}
   >
     {value}
   </SquareContainer>
