@@ -8,6 +8,7 @@ export enum ActionTypes {
   selectSquare = "SELECT_SQUARE",
   deselectSquare = "DESELECT_SQUARE",
   placeSquare = "PLACE_SQUARE",
+  placeHandSquare = "PLACE_HAND_SQUARE",
   clearSelected = "DISCARD_SELECTED",
   makeActive = "MAKE_ACTIVE",
   selectHandSquare = "SELECT_HAND_SQUARE"
@@ -17,6 +18,7 @@ export type GameActions =
   | SelectSquareAction
   | SelectHandSquareAction
   | PlaceSquareAction
+  | PlaceHandSquareAction
   | ClearSelectedAction
   | MakeActiveAction;
 
@@ -31,6 +33,20 @@ export type PlaceSquareAction = VectorAction<ActionTypes.placeSquare>;
 export const createPlaceSquareAction = vectorActionCreatorFactory<
   ActionTypes.placeSquare
 >(ActionTypes.placeSquare);
+
+export interface PlaceHandSquareAction {
+  type: ActionTypes.placeHandSquare;
+  payload: { index: number };
+}
+
+export function createPlaceHandSquareAction(
+  index: number
+): PlaceHandSquareAction {
+  return {
+    type: ActionTypes.placeHandSquare,
+    payload: { index }
+  };
+}
 
 export interface ClearSelectedAction {
   type: ActionTypes.clearSelected;

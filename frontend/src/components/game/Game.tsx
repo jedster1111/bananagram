@@ -28,11 +28,11 @@ export interface HandSelected {
 }
 
 export interface Squares {
-  [column: number]:
-    | {
-        [row: number]: string | undefined;
-      }
-    | undefined;
+  [column: number]: Column | undefined;
+}
+
+export interface Column {
+  [row: number]: string | undefined;
 }
 
 const GameInfoContainer = styled.div`

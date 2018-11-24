@@ -1,4 +1,8 @@
-import { createSelectHandSquareAction, GameActions } from "../game/actions";
+import {
+  createPlaceHandSquareAction,
+  createSelectHandSquareAction,
+  GameActions
+} from "../game/actions";
 import { createMoveSelectorAction, HandActions } from "./actions";
 
 export function handleHandKeyPresses(
@@ -12,6 +16,8 @@ export function handleHandKeyPresses(
   if (!isActive) {
     return;
   }
+
+  const isCtrlPressed = event.getModifierState("Control");
 
   switch (event.key) {
     case "ArrowLeft": {
@@ -29,7 +35,11 @@ export function handleHandKeyPresses(
     }
 
     case "Enter": {
-      gameDispatch(createSelectHandSquareAction(hoveredSquareIndex));
+      if (isCtrlPressed) {
+        gameDispatch(createPlaceHandSquareAction(hoveredSquareIndex));
+      } else {
+        gameDispatch(createSelectHandSquareAction(hoveredSquareIndex));
+      }
     }
 
     default: {

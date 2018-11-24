@@ -1,6 +1,7 @@
 import { getValueInSquares, setSquareValue } from "../../common/squaresMethods";
+import { createVector } from "../../common/vectorMethods";
 import { ActionTypes, GameActions } from "./actions";
-import { State } from "./Game";
+import { Column, GridSelected, HandSelected, State } from "./Game";
 
 export function createInitialState(): State {
   return {
@@ -13,9 +14,21 @@ export function createInitialState(): State {
       5: { 3: "L" }
     },
     error: undefined,
-    handSquares: ["B", "A", "N", "A", "N", "A"],
+    handSquares: ["A", "B", "C", "D", "E", "F"],
     active: "hand"
   };
+}
+
+function isSelectedGrid(
+  selectedGrid: GridSelected | undefined
+): selectedGrid is GridSelected {
+  return selectedGrid !== undefined;
+}
+
+function isSelectedHand(
+  selectedHand: HandSelected | undefined
+): selectedHand is HandSelected {
+  return selectedHand !== undefined;
 }
 
 export function reducer(currentState: State, action: GameActions): State {
@@ -40,7 +53,7 @@ export function reducer(currentState: State, action: GameActions): State {
           ? selectedSquareVector
           : currentState.gridSelected.originalPosition;
 
-      const newSquares =
+      const newSelectedSquares =
         currentState.gridSelected === undefined
           ? setSquareValue(selectedSquareVector, selectedSquareValue, {})
           : setSquareValue(
@@ -49,14 +62,14 @@ export function reducer(currentState: State, action: GameActions): State {
               currentState.gridSelected.squares
             );
 
-      console.log(newSquares);
+      console.log(newSelectedSquares);
 
       return {
         ...currentState,
         gridSelected: {
           ...currentState.gridSelected,
           originalPosition,
-          squares: newSquares
+          squares: newSelectedSquares
         },
         handSelected: undefined,
         error: undefined
@@ -80,6 +93,79 @@ export function reducer(currentState: State, action: GameActions): State {
 
     case ActionTypes.placeSquare: {
       return currentState;
+    }
+
+    case ActionTypes.placeHandSquare: {
+      const { gridSelected, handSelected } = currentState;
+      const { index: selectedIndex } = action.payload;
+
+      if (!isSelectedGrid && !isSelectedHand) {
+        return {
+          ...currentState,
+          error: "You didn't have anything selected to put down"
+        };
+      }
+
+      const newHandSquares = [...currentState.handSquares];
+      let newSquares = { ...currentState.squares };
+
+      if (isSelectedHand(handSelected)) {
+        newHandSquares.splice(
+          selectedIndex,
+          0,
+          newHandSquares.splice(handSelected.index, 1)[0]
+        );
+      }
+
+      if (isSelectedGrid(gridSelected)) {
+        const letters = Object.entries(gridSelected.squares).reduce<string[]>(
+          (prev, [x, col]: [string, Column]) => {
+            Object.entries(col).forEach(
+              ([y, selectedValue]: [string, string]) => {
+                const xInt = parseInt(x, 10);
+                const yInt = parseInt(y, 10);
+
+                if (xInt !== undefined && yInt !== undefined) {
+                  const squaresValue = getValueInSquares(
+                    createVector(xInt, yInt),
+                    currentState.squares
+                  );
+
+                  if (squaresValue) {
+                    prev.push(squaresValue);
+                  }
+                }
+              }
+            );
+            return prev;
+          },
+          []
+        );
+
+        newHandSquares.splice(selectedIndex, 0, ...letters);
+
+        Object.entries(gridSelected.squares).forEach(
+          ([x, col]: [string, Column]) => {
+            Object.entries(col).forEach(([y, selectedValue]) => {
+              const xInt = parseInt(x, 10);
+              const yInt = parseInt(y, 10);
+              newSquares = setSquareValue(
+                createVector(xInt, yInt),
+                undefined,
+                newSquares
+              );
+            });
+          }
+        );
+      }
+
+      return {
+        ...currentState,
+        handSquares: newHandSquares,
+        squares: newSquares,
+        gridSelected: undefined,
+        handSelected: undefined
+      };
     }
 
     case ActionTypes.selectHandSquare: {
