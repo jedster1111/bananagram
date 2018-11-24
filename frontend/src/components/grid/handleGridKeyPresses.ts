@@ -3,7 +3,11 @@ import {
   translateVector,
   Vector
 } from "../../common/vectorMethods";
-import { createSelectSquareAction, GameActions } from "../game/actions";
+import {
+  createPlaceGridSquareAction,
+  createSelectSquareAction,
+  GameActions
+} from "../game/actions";
 import {
   createaTranslateSelectorAction,
   createTranslateOffsetAction,
@@ -65,7 +69,11 @@ export function handleKeyPresses(
       break;
     }
     case "Enter": {
-      gameDispatch(createSelectSquareAction(hoveredSquare));
+      if (isCtrlPressed) {
+        gameDispatch(createPlaceGridSquareAction(hoveredSquare));
+      } else {
+        gameDispatch(createSelectSquareAction(hoveredSquare));
+      }
       break;
     }
     default: {

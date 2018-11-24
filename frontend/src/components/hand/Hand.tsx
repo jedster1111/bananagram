@@ -75,6 +75,7 @@ const Hand: React.FC<HandProps> = props => {
         const isSelected = index === props.selectedIndex;
         return (
           <Square
+            key={index}
             isHovered={isHovered}
             isHandActive={props.isHandActive}
             isSelected={isSelected}

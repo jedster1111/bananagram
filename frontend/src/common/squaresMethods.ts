@@ -6,7 +6,6 @@ export function setSquareValue(
   value: string | undefined,
   squares: Squares
 ) {
-  console.log(`Setting ${vector.x}, ${vector.y} to ${value}`);
   const newSquares = deepCloneSquaresColumns(squares, vector.x);
   let column = newSquares[vector.x];
   if (!column) {

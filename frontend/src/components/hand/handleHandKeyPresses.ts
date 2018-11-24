@@ -40,6 +40,7 @@ export function handleHandKeyPresses(
       } else {
         gameDispatch(createSelectHandSquareAction(hoveredSquareIndex));
       }
+      break;
     }
 
     default: {
