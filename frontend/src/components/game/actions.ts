@@ -5,8 +5,8 @@ import {
 import { ActiveTypes } from "./Game";
 
 export enum ActionTypes {
-  selectSquare = "SELECT_SQUARE",
-  deselectSquare = "DESELECT_SQUARE",
+  selectGridSquare = "SELECT_GRID_SQUARE",
+  deselectGridSquare = "DESELECT_GRID_SQUARE",
   placeGridSquare = "PLACE_GRID_SQUARE",
   placeHandSquare = "PLACE_HAND_SQUARE",
   clearSelected = "DISCARD_SELECTED",
@@ -16,17 +16,26 @@ export enum ActionTypes {
 
 export type GameActions =
   | SelectGridSquareAction
+  | DeselectGridSquareAction
   | SelectHandSquareAction
   | PlaceGridSquareAction
   | PlaceHandSquareAction
   | ClearSelectedAction
   | MakeActiveAction;
 
-export type SelectGridSquareAction = VectorAction<ActionTypes.selectSquare>;
+export type SelectGridSquareAction = VectorAction<ActionTypes.selectGridSquare>;
 
-export const createSelectSquareAction = vectorActionCreatorFactory<
-  ActionTypes.selectSquare
->(ActionTypes.selectSquare);
+export const createSelectGridSquareAction = vectorActionCreatorFactory<
+  ActionTypes.selectGridSquare
+>(ActionTypes.selectGridSquare);
+
+export type DeselectGridSquareAction = VectorAction<
+  ActionTypes.deselectGridSquare
+>;
+
+export const createDeselectGridSquareAction = vectorActionCreatorFactory<
+  ActionTypes.deselectGridSquare
+>(ActionTypes.deselectGridSquare);
 
 export type PlaceGridSquareAction = VectorAction<ActionTypes.placeGridSquare>;
 

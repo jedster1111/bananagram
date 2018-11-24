@@ -2,6 +2,7 @@ import { getValueInSquares, setSquareValue } from "../../common/squaresMethods";
 import {
   createVector,
   inverseVector,
+  isSameVector,
   translateVector
 } from "../../common/vectorMethods";
 import { ActionTypes, GameActions } from "./actions";
@@ -37,7 +38,7 @@ function isHandSelected(
 
 export function reducer(currentState: State, action: GameActions): State {
   switch (action.type) {
-    case ActionTypes.selectSquare: {
+    case ActionTypes.selectGridSquare: {
       const selectedSquareVector = action.payload.vector;
 
       const selectedSquareValue = getValueInSquares(
@@ -77,6 +78,38 @@ export function reducer(currentState: State, action: GameActions): State {
         },
         handSelected: undefined,
         error: undefined
+      };
+    }
+
+    case ActionTypes.deselectGridSquare: {
+      const { gridSelected } = currentState;
+      const { vector } = action.payload;
+
+      if (gridSelected === undefined) {
+        return {
+          ...currentState,
+          error: "There are no selected squares to remove!"
+        };
+      }
+
+      if (isSameVector(gridSelected.originalPosition, vector)) {
+        return {
+          ...currentState,
+          error: "Can't unselect the original selection square"
+        };
+      }
+
+      let newSelectedSquares = { ...gridSelected.squares };
+
+      newSelectedSquares = setSquareValue(
+        vector,
+        undefined,
+        newSelectedSquares
+      );
+
+      return {
+        ...currentState,
+        gridSelected: { ...gridSelected, squares: newSelectedSquares }
       };
     }
 
@@ -278,21 +311,3 @@ export function reducer(currentState: State, action: GameActions): State {
     }
   }
 }
-
-// function getSquaresWithSelectedSetToUndefined(
-//   gridSelected: GridSelected,
-//   newGridSquares: { [x: number]: Column | undefined }
-// ) {
-//   Object.entries(gridSelected.squares).forEach(([x, col]: [string, Column]) => {
-//     Object.entries(col).forEach(([y, selectedValue]) => {
-//       const xInt = parseInt(x, 10);
-//       const yInt = parseInt(y, 10);
-//       newGridSquares = setSquareValue(
-//         createVector(xInt, yInt),
-//         undefined,
-//         newGridSquares
-//       );
-//     });
-//   });
-//   return newGridSquares;
-// }

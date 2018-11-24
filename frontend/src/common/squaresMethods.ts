@@ -13,6 +13,12 @@ export function setSquareValue(
   } else {
     column[vector.y] = value;
   }
+
+  if (Object.values(column).every(row => row === undefined)) {
+    newSquares[vector.x] = undefined;
+  }
+
+  console.log(Object.keys(column));
   return newSquares;
 }
 

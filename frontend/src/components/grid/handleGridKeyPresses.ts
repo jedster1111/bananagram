@@ -1,13 +1,16 @@
+import { getValueInSquares } from "../../common/squaresMethods";
 import {
   createVector,
   translateVector,
   Vector
 } from "../../common/vectorMethods";
 import {
+  createDeselectGridSquareAction,
   createPlaceGridSquareAction,
-  createSelectSquareAction,
+  createSelectGridSquareAction,
   GameActions
 } from "../game/actions";
+import { Squares } from "../game/Game";
 import {
   createaTranslateSelectorAction,
   createTranslateOffsetAction,
@@ -19,7 +22,8 @@ export function handleKeyPresses(
   event: KeyboardEvent,
   gridDispatch: React.Dispatch<GridActions>,
   gameDispatch: React.Dispatch<GameActions>,
-  hoveredSquare: Vector,
+  hoveredSquareVector: Vector,
+  selectedSquares: Squares | undefined,
   offset: Vector,
   dimensions: Dimensions,
   isActive: boolean
@@ -29,7 +33,7 @@ export function handleKeyPresses(
   }
 
   const isCtrlPressed = event.getModifierState("Control");
-  const { x: absX, y: absY } = translateVector(hoveredSquare, offset);
+  const { x: absX, y: absY } = translateVector(hoveredSquareVector, offset);
 
   switch (event.key) {
     case "ArrowUp": {
@@ -70,9 +74,12 @@ export function handleKeyPresses(
     }
     case "Enter": {
       if (isCtrlPressed) {
-        gameDispatch(createPlaceGridSquareAction(hoveredSquare));
+        gameDispatch(createPlaceGridSquareAction(hoveredSquareVector));
       } else {
-        gameDispatch(createSelectSquareAction(hoveredSquare));
+        selectedSquares &&
+        getValueInSquares(hoveredSquareVector, selectedSquares)
+          ? gameDispatch(createDeselectGridSquareAction(hoveredSquareVector))
+          : gameDispatch(createSelectGridSquareAction(hoveredSquareVector));
       }
       break;
     }

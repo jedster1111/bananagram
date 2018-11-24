@@ -59,6 +59,7 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         dispatch,
         props.gameDispatch,
         state.hoveredSquare,
+        props.selectedSquares && props.selectedSquares.squares,
         state.offset,
         props.dimensions,
         props.isGameActive
