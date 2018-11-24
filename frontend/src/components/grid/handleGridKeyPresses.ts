@@ -8,7 +8,9 @@ import {
   createDeselectGridSquareAction,
   createPlaceGridSquareAction,
   createPlaceGridSquareWithKeyboardAction,
+  createPlaceHandSquareAction,
   createSelectGridSquareAction,
+  createSendHoveredToHandAction,
   GameActions
 } from "../game/actions";
 import { Squares } from "../game/Game";
@@ -82,6 +84,12 @@ export function handleKeyPresses(
           ? gameDispatch(createDeselectGridSquareAction(hoveredSquareVector))
           : gameDispatch(createSelectGridSquareAction(hoveredSquareVector));
       }
+      break;
+    }
+    case "Delete": {
+      selectedSquares
+        ? gameDispatch(createPlaceHandSquareAction())
+        : gameDispatch(createSendHoveredToHandAction(hoveredSquareVector));
       break;
     }
 

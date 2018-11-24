@@ -177,67 +177,69 @@ export function reducer(currentState: State, action: GameActions): State {
 
             if (col !== undefined) {
               // Looping through the column at position x
-              Object.entries(col).forEach(([y, _]: [string, string]) => {
-                const yInt = parseInt(y, 10);
+              Object.entries(col).forEach(
+                ([y, selectedValue]: [string, string | undefined]) => {
+                  if (selectedValue !== undefined) {
+                    const yInt = parseInt(y, 10);
 
-                // the position of the current loop's selected square
-                const positionVector = createVector(xInt, yInt);
+                    // the position of the current loop's selected square
+                    const positionVector = createVector(xInt, yInt);
 
-                const selectedValue = getValueInSquares(
-                  positionVector,
-                  currentState.squares
-                );
+                    // apply the translationVector to get the position this square will be moved to
+                    const newPositionVector = translateVector(
+                      positionVector,
+                      translationVector
+                    );
 
-                // apply the translationVector to get this square's new position
-                const newPositionVector = translateVector(
-                  positionVector,
-                  translationVector
-                );
+                    // get the value of the square that we're trying to move into
+                    const existingValue = getValueInSquares(
+                      newPositionVector,
+                      currentState.squares
+                    );
 
-                // get the value of the square that we're trying to move into
-                const existingValue = getValueInSquares(
-                  newPositionVector,
-                  currentState.squares
-                );
+                    // add the square that we're about to change to our list, so we can avoid re-editing it later
+                    squaresThatHaveBeenChanged = setSquareValue(
+                      newPositionVector,
+                      selectedValue,
+                      squaresThatHaveBeenChanged
+                    );
 
-                // add the square that we're about to change to our list, so we can avoid re-editing it later
-                squaresThatHaveBeenChanged = setSquareValue(
-                  newPositionVector,
-                  selectedValue,
-                  squaresThatHaveBeenChanged
-                );
+                    // set the new square's value
+                    newGridSquares = setSquareValue(
+                      newPositionVector,
+                      selectedValue,
+                      newGridSquares
+                    );
 
-                // set the new square's value
-                newGridSquares = setSquareValue(
-                  newPositionVector,
-                  selectedValue,
-                  newGridSquares
-                );
+                    const squareHasBeenEdited = !!getValueInSquares(
+                      positionVector,
+                      squaresThatHaveBeenChanged
+                    );
+                    const isNewPositionInSelected = !!getValueInSquares(
+                      newPositionVector,
+                      gridSelected.squares
+                    );
 
-                const squareHasBeenEdited = !!getValueInSquares(
-                  positionVector,
-                  squaresThatHaveBeenChanged
-                );
-                const isNewPositionInSelected = !!getValueInSquares(
-                  newPositionVector,
-                  gridSelected.squares
-                );
-
-                // If the original position has been edited in a previous loop,
-                // don't clear it
-                if (!squareHasBeenEdited) {
-                  // if there's already a tile and the new position isn't going to be edited, then move it into your hand
-                  if (existingValue !== undefined && !isNewPositionInSelected) {
-                    newHandSquares.push(existingValue);
+                    // If the original position has been edited in a previous loop,
+                    // don't clear it
+                    if (!squareHasBeenEdited) {
+                      // if there's already a tile and the new position isn't going to be edited, then move it into your hand
+                      if (
+                        existingValue !== undefined &&
+                        !isNewPositionInSelected
+                      ) {
+                        newHandSquares.splice(0, 0, existingValue);
+                      }
+                      // remove the square from it's old position
+                      newGridSquares = setSquareValue(
+                        positionVector,
+                        undefined,
+                        newGridSquares
+                      );
+                    }
                   }
-                  // remove the square from it's old position
-                  newGridSquares = setSquareValue(
-                    positionVector,
-                    undefined,
-                    newGridSquares
-                  );
                 }
-              });
+              );
             }
           }
         );
@@ -283,7 +285,8 @@ export function reducer(currentState: State, action: GameActions): State {
       );
 
       if (existingValue !== undefined) {
-        newHandSquares.push(existingValue);
+        // newHandSquares.push(existingValue);
+        newHandSquares.splice(0, 0, existingValue);
       }
 
       return {
@@ -319,33 +322,35 @@ export function reducer(currentState: State, action: GameActions): State {
 
       if (isGridSelected(gridSelected)) {
         const letters = Object.entries(gridSelected.squares).reduce<string[]>(
-          (prev, [x, col]: [string, Column]) => {
+          (prev, [x, col]: [string, Column | undefined]) => {
             const xInt = parseInt(x, 10);
 
-            Object.entries(col).forEach(
-              ([y, selectedValue]: [string, string]) => {
-                const yInt = parseInt(y, 10);
+            if (col !== undefined) {
+              Object.entries(col).forEach(
+                ([y, selectedValue]: [string, string | undefined]) => {
+                  if (selectedValue !== undefined) {
+                    const yInt = parseInt(y, 10);
 
-                if (xInt !== undefined && yInt !== undefined) {
-                  const selectedVector = createVector(xInt, yInt);
+                    const selectedVector = createVector(xInt, yInt);
 
-                  const squaresValue = getValueInSquares(
-                    selectedVector,
-                    currentState.squares
-                  );
-
-                  if (squaresValue) {
-                    prev.push(squaresValue);
-
-                    newGridSquares = setSquareValue(
+                    const squaresValue = getValueInSquares(
                       selectedVector,
-                      undefined,
-                      newGridSquares
+                      currentState.squares
                     );
+
+                    if (squaresValue) {
+                      prev.push(squaresValue);
+
+                      newGridSquares = setSquareValue(
+                        selectedVector,
+                        undefined,
+                        newGridSquares
+                      );
+                    }
                   }
                 }
-              }
-            );
+              );
+            }
             return prev;
           },
           []
@@ -360,6 +365,28 @@ export function reducer(currentState: State, action: GameActions): State {
         squares: newGridSquares,
         gridSelected: undefined,
         handSelected: undefined,
+        error: undefined
+      };
+    }
+
+    case ActionTypes.sendHoveredToHand: {
+      const { vector } = action.payload;
+      const { squares, handSquares } = currentState;
+
+      const hoveredValue = getValueInSquares(vector, squares);
+
+      if (hoveredValue === undefined) {
+        return { ...currentState, error: "You're not hovered over anything?" };
+      }
+
+      const newSquares = setSquareValue(vector, undefined, squares);
+
+      const newHandSquares = [hoveredValue, ...handSquares];
+
+      return {
+        ...currentState,
+        squares: newSquares,
+        handSquares: newHandSquares,
         error: undefined
       };
     }
@@ -381,6 +408,7 @@ export function reducer(currentState: State, action: GameActions): State {
     }
   }
 }
+
 function removeElementAtIndex(index: number, array: string[]) {
   const newArray = [...array];
   newArray.splice(index, 1);

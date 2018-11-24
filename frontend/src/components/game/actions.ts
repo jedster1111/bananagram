@@ -13,6 +13,7 @@ export enum ActionTypes {
   placeHandSquare = "PLACE_HAND_SQUARE",
   clearSelected = "DISCARD_SELECTED",
   makeActive = "MAKE_ACTIVE",
+  sendHoveredToHand = "SEND_HOVERED_TO_HAND",
   selectHandSquare = "SELECT_HAND_SQUARE"
 }
 
@@ -24,6 +25,7 @@ export type GameActions =
   | PlaceGridSquareWithKeyboardAction
   | PlaceHandSquareAction
   | ClearSelectedAction
+  | SendHoveredToHandAction
   | MakeActiveAction;
 
 export type SelectGridSquareAction = VectorAction<ActionTypes.selectGridSquare>;
@@ -67,11 +69,11 @@ export interface PlaceHandSquareAction {
 }
 
 export function createPlaceHandSquareAction(
-  index: number
+  index?: number
 ): PlaceHandSquareAction {
   return {
     type: ActionTypes.placeHandSquare,
-    payload: { index }
+    payload: { index: index || 0 }
   };
 }
 
@@ -98,6 +100,14 @@ export function createMakeActiveAction(
     payload: { makeActive }
   };
 }
+
+export type SendHoveredToHandAction = VectorAction<
+  ActionTypes.sendHoveredToHand
+>;
+
+export const createSendHoveredToHandAction = vectorActionCreatorFactory<
+  ActionTypes.sendHoveredToHand
+>(ActionTypes.sendHoveredToHand);
 
 export interface SelectHandSquareAction {
   type: ActionTypes.selectHandSquare;
