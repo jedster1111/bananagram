@@ -173,6 +173,8 @@ export function reducer(currentState: State, action: GameActions): State {
           ([x, col]: [string, Column]) => {
             const xInt = parseInt(x, 10);
 
+            // bug here!!!!!!
+
             // Looping through the column at position x
             Object.entries(col).forEach(
               ([y, selectedValue]: [string, string]) => {

@@ -1,7 +1,7 @@
 import * as React from "react";
 import styled from "styled-components";
 import { GameActions } from "../game/actions";
-import { HandActions } from "./actions";
+import { createMoveSelectorAction, HandActions } from "./actions";
 import { handleHandKeyPresses } from "./handleHandKeyPresses";
 import { createInitialState, reducer } from "./reducer";
 
@@ -67,6 +67,19 @@ const Hand: React.FC<HandProps> = props => {
       window.document.removeEventListener("keydown", onKeyPress);
     };
   });
+
+  React.useEffect(
+    () => {
+      if (state.hoveredSquareIndex >= props.handSquares.length) {
+        const step = props.handSquares.length - 1 - state.hoveredSquareIndex;
+        console.log(
+          `Hand selector is out of bounds, moving selector by ${step} step/s`
+        );
+        dispatch(createMoveSelectorAction(step));
+      }
+    },
+    [props.handSquares]
+  );
 
   return (
     <HandContainer>
