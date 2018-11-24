@@ -1,6 +1,12 @@
 import { Squares } from "../components/game/Game";
 import { Vector } from "./vectorMethods";
 
+/**
+ * Sets the value of the square at the specified vector.
+ * @returns A copy of the squares with the new value.
+ * Note only the effected column will be deep cloned,
+ * the remaining columns will still be references.
+ */
 export function setSquareValue(
   vector: Vector,
   value: string | undefined,
