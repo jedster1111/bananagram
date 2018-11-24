@@ -7,6 +7,7 @@ import {
 import {
   createDeselectGridSquareAction,
   createPlaceGridSquareAction,
+  createPlaceGridSquareWithKeyboardAction,
   createSelectGridSquareAction,
   GameActions
 } from "../game/actions";
@@ -83,7 +84,16 @@ export function handleKeyPresses(
       }
       break;
     }
+
     default: {
+      if (RegExp(/^[a-z]$/i).test(event.key)) {
+        gameDispatch(
+          createPlaceGridSquareWithKeyboardAction(
+            event.key,
+            hoveredSquareVector
+          )
+        );
+      }
       break;
     }
   }

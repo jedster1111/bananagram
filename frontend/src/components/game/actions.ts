@@ -2,12 +2,14 @@ import {
   VectorAction,
   vectorActionCreatorFactory
 } from "../../common/vectorActionFactory";
+import { Vector } from "../../common/vectorMethods";
 import { ActiveTypes } from "./Game";
 
 export enum ActionTypes {
   selectGridSquare = "SELECT_GRID_SQUARE",
   deselectGridSquare = "DESELECT_GRID_SQUARE",
   placeGridSquare = "PLACE_GRID_SQUARE",
+  placeGridSquareWithKeyboard = "PLACE_GRID_SQUARE_WITH_KEYBOARD",
   placeHandSquare = "PLACE_HAND_SQUARE",
   clearSelected = "DISCARD_SELECTED",
   makeActive = "MAKE_ACTIVE",
@@ -19,6 +21,7 @@ export type GameActions =
   | DeselectGridSquareAction
   | SelectHandSquareAction
   | PlaceGridSquareAction
+  | PlaceGridSquareWithKeyboardAction
   | PlaceHandSquareAction
   | ClearSelectedAction
   | MakeActiveAction;
@@ -42,6 +45,21 @@ export type PlaceGridSquareAction = VectorAction<ActionTypes.placeGridSquare>;
 export const createPlaceGridSquareAction = vectorActionCreatorFactory<
   ActionTypes.placeGridSquare
 >(ActionTypes.placeGridSquare);
+
+export interface PlaceGridSquareWithKeyboardAction {
+  type: ActionTypes.placeGridSquareWithKeyboard;
+  payload: { key: string; vector: Vector };
+}
+
+export function createPlaceGridSquareWithKeyboardAction(
+  key: string,
+  vector: Vector
+): PlaceGridSquareWithKeyboardAction {
+  return {
+    type: ActionTypes.placeGridSquareWithKeyboard,
+    payload: { key, vector }
+  };
+}
 
 export interface PlaceHandSquareAction {
   type: ActionTypes.placeHandSquare;

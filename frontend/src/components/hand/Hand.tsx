@@ -70,11 +70,20 @@ const Hand: React.FC<HandProps> = props => {
 
   React.useEffect(
     () => {
-      if (state.hoveredSquareIndex >= props.handSquares.length) {
-        const step = props.handSquares.length - 1 - state.hoveredSquareIndex;
+      if (
+        state.hoveredSquareIndex >= props.handSquares.length ||
+        state.hoveredSquareIndex < 0
+      ) {
+        const stepToMax =
+          props.handSquares.length - 1 - state.hoveredSquareIndex;
+
+        const step =
+          state.hoveredSquareIndex < 0 ? -state.hoveredSquareIndex : stepToMax;
+
         console.log(
-          `Hand selector is out of bounds, moving selector by ${step} step/s`
+          `Hand selector is out of bounds, moving selector ${step} step/s`
         );
+
         dispatch(createMoveSelectorAction(step));
       }
     },
@@ -83,20 +92,24 @@ const Hand: React.FC<HandProps> = props => {
 
   return (
     <HandContainer>
-      {props.handSquares.map((square, index) => {
-        const isHovered = index === state.hoveredSquareIndex;
-        const isSelected = index === props.selectedIndex;
-        return (
-          <Square
-            key={index}
-            isHovered={isHovered}
-            isHandActive={props.isHandActive}
-            isSelected={isSelected}
-          >
-            {square}
-          </Square>
-        );
-      })}
+      {props.handSquares.length > 0 ? (
+        props.handSquares.map((square, index) => {
+          const isHovered = index === state.hoveredSquareIndex;
+          const isSelected = index === props.selectedIndex;
+          return (
+            <Square
+              key={index}
+              isHovered={isHovered}
+              isHandActive={props.isHandActive}
+              isSelected={isSelected}
+            >
+              {square}
+            </Square>
+          );
+        })
+      ) : (
+        <button>Peel</button>
+      )}
     </HandContainer>
   );
 };

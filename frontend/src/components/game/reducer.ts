@@ -109,7 +109,8 @@ export function reducer(currentState: State, action: GameActions): State {
 
       return {
         ...currentState,
-        gridSelected: { ...gridSelected, squares: newSelectedSquares }
+        gridSelected: { ...gridSelected, squares: newSelectedSquares },
+        error: undefined
       };
     }
 
@@ -142,9 +143,10 @@ export function reducer(currentState: State, action: GameActions): State {
 
       const newHandSquares = [...currentState.handSquares];
       let newGridSquares = { ...currentState.squares };
+      let squaresThatHaveBeenChanged = {};
 
       if (isHandSelected(handSelected)) {
-        const existingValue = getValueInSquares(vector, newGridSquares);
+        const existingValue = getValueInSquares(vector, currentState.squares);
 
         if (existingValue !== undefined) {
           newHandSquares.push(existingValue);
@@ -154,7 +156,7 @@ export function reducer(currentState: State, action: GameActions): State {
         newGridSquares = setSquareValue(
           vector,
           handSquares[handSelected.index],
-          newGridSquares
+          currentState.squares
         );
 
         // remove the square that was just placed from your hand
@@ -170,18 +172,21 @@ export function reducer(currentState: State, action: GameActions): State {
 
         // Looping through the selected squares
         Object.entries(gridSelected.squares).forEach(
-          ([x, col]: [string, Column]) => {
+          ([x, col]: [string, Column | undefined]) => {
             const xInt = parseInt(x, 10);
 
-            // bug here!!!!!!
-
-            // Looping through the column at position x
-            Object.entries(col).forEach(
-              ([y, selectedValue]: [string, string]) => {
+            if (col !== undefined) {
+              // Looping through the column at position x
+              Object.entries(col).forEach(([y, _]: [string, string]) => {
                 const yInt = parseInt(y, 10);
 
                 // the position of the current loop's selected square
                 const positionVector = createVector(xInt, yInt);
+
+                const selectedValue = getValueInSquares(
+                  positionVector,
+                  currentState.squares
+                );
 
                 // apply the translationVector to get this square's new position
                 const newPositionVector = translateVector(
@@ -192,13 +197,15 @@ export function reducer(currentState: State, action: GameActions): State {
                 // get the value of the square that we're trying to move into
                 const existingValue = getValueInSquares(
                   newPositionVector,
-                  newGridSquares
+                  currentState.squares
                 );
 
-                // if there's already a tile, then move it into your hand
-                if (existingValue !== undefined) {
-                  newHandSquares.push(existingValue);
-                }
+                // add the square that we're about to change to our list, so we can avoid re-editing it later
+                squaresThatHaveBeenChanged = setSquareValue(
+                  newPositionVector,
+                  selectedValue,
+                  squaresThatHaveBeenChanged
+                );
 
                 // set the new square's value
                 newGridSquares = setSquareValue(
@@ -207,14 +214,31 @@ export function reducer(currentState: State, action: GameActions): State {
                   newGridSquares
                 );
 
-                // remove the square from it's old position
-                newGridSquares = setSquareValue(
+                const squareHasBeenEdited = !!getValueInSquares(
                   positionVector,
-                  undefined,
-                  newGridSquares
+                  squaresThatHaveBeenChanged
                 );
-              }
-            );
+                const isNewPositionInSelected = !!getValueInSquares(
+                  newPositionVector,
+                  gridSelected.squares
+                );
+
+                // If the original position has been edited in a previous loop,
+                // don't clear it
+                if (!squareHasBeenEdited) {
+                  // if there's already a tile and the new position isn't going to be edited, then move it into your hand
+                  if (existingValue !== undefined && !isNewPositionInSelected) {
+                    newHandSquares.push(existingValue);
+                  }
+                  // remove the square from it's old position
+                  newGridSquares = setSquareValue(
+                    positionVector,
+                    undefined,
+                    newGridSquares
+                  );
+                }
+              });
+            }
           }
         );
       }
@@ -224,7 +248,49 @@ export function reducer(currentState: State, action: GameActions): State {
         squares: newGridSquares,
         handSquares: newHandSquares,
         gridSelected: undefined,
-        handSelected: undefined
+        handSelected: undefined,
+        error: undefined
+      };
+    }
+
+    case ActionTypes.placeGridSquareWithKeyboard: {
+      const { key, vector } = action.payload;
+
+      const upperCaseKey = key.toUpperCase();
+
+      const indexOfHandSquare = currentState.handSquares.findIndex(
+        square => square === upperCaseKey
+      );
+
+      if (indexOfHandSquare === -1) {
+        return {
+          ...currentState,
+          error: `You don't have a ${upperCaseKey} in your hand!`
+        };
+      }
+
+      const existingValue = getValueInSquares(vector, currentState.squares);
+
+      const newGridSquares = setSquareValue(
+        vector,
+        upperCaseKey,
+        currentState.squares
+      );
+
+      const newHandSquares = removeElementAtIndex(
+        indexOfHandSquare,
+        currentState.handSquares
+      );
+
+      if (existingValue !== undefined) {
+        newHandSquares.push(existingValue);
+      }
+
+      return {
+        ...currentState,
+        squares: newGridSquares,
+        handSquares: newHandSquares,
+        error: undefined
       };
     }
 
@@ -293,7 +359,8 @@ export function reducer(currentState: State, action: GameActions): State {
         handSquares: newHandSquares,
         squares: newGridSquares,
         gridSelected: undefined,
-        handSelected: undefined
+        handSelected: undefined,
+        error: undefined
       };
     }
 
@@ -304,7 +371,8 @@ export function reducer(currentState: State, action: GameActions): State {
           ...currentState.handSelected,
           index: action.payload.index
         },
-        gridSelected: undefined
+        gridSelected: undefined,
+        error: undefined
       };
     }
 
@@ -312,4 +380,9 @@ export function reducer(currentState: State, action: GameActions): State {
       return currentState;
     }
   }
+}
+function removeElementAtIndex(index: number, array: string[]) {
+  const newArray = [...array];
+  newArray.splice(index, 1);
+  return newArray;
 }
