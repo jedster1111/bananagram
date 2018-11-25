@@ -1,3 +1,4 @@
+import { Key } from "ts-key-enum";
 import { getValueInSquares } from "../../common/squaresMethods";
 import {
   createVector,
@@ -35,11 +36,12 @@ export function handleKeyPresses(
     return;
   }
 
-  const isCtrlPressed = event.getModifierState("Control");
+  const isCtrlPressed = event.ctrlKey;
+  const isShiftPressed = event.shiftKey;
   const { x: absX, y: absY } = translateVector(hoveredSquareVector, offset);
 
   switch (event.key) {
-    case "ArrowUp": {
+    case Key.ArrowUp: {
       const vector = createVector(0, -1);
       if (isCtrlPressed) {
         gridDispatch(createTranslateOffsetAction(vector));
@@ -48,7 +50,7 @@ export function handleKeyPresses(
       }
       break;
     }
-    case "ArrowRight": {
+    case Key.ArrowRight: {
       const vector = createVector(1, 0);
       if (isCtrlPressed) {
         gridDispatch(createTranslateOffsetAction(vector));
@@ -57,7 +59,7 @@ export function handleKeyPresses(
       }
       break;
     }
-    case "ArrowDown": {
+    case Key.ArrowDown: {
       const vector = createVector(0, 1);
       if (isCtrlPressed) {
         gridDispatch(createTranslateOffsetAction(vector));
@@ -66,7 +68,7 @@ export function handleKeyPresses(
       }
       break;
     }
-    case "ArrowLeft": {
+    case Key.ArrowLeft: {
       const vector = createVector(-1, 0);
       if (isCtrlPressed) {
         gridDispatch(createTranslateOffsetAction(vector));
@@ -75,17 +77,22 @@ export function handleKeyPresses(
       }
       break;
     }
-    case "Enter": {
-      if (isCtrlPressed) {
-        gameDispatch(createPlaceGridSquareAction(hoveredSquareVector));
-      } else {
+    case Key.Enter: {
+      if (isShiftPressed) {
         selectedSquares &&
         getValueInSquares(hoveredSquareVector, selectedSquares)
           ? gameDispatch(createDeselectGridSquareAction(hoveredSquareVector))
           : gameDispatch(createSelectGridSquareAction(hoveredSquareVector));
+      } else {
+        if (!selectedSquares) {
+          gameDispatch(createSelectGridSquareAction(hoveredSquareVector));
+        } else {
+          gameDispatch(createPlaceGridSquareAction(hoveredSquareVector));
+        }
       }
       break;
     }
+    case Key.Backspace:
     case "Delete": {
       selectedSquares
         ? gameDispatch(createPlaceHandSquareAction())

@@ -1,4 +1,5 @@
 import { Dispatch } from "react";
+import { Key } from "ts-key-enum";
 import {
   createClearSelectedAction,
   createMakeActiveAction,
@@ -15,7 +16,7 @@ export function handleGameKeyPresses(
       dispatch(createMakeActiveAction(isGridActive ? "hand" : "grid"));
       break;
     }
-    case "Escape": {
+    case Key.Escape: {
       dispatch(createClearSelectedAction());
       break;
     }

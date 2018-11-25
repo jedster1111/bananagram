@@ -1,3 +1,4 @@
+import { Key } from "ts-key-enum";
 import {
   createPlaceHandSquareAction,
   createSelectHandSquareAction,
@@ -20,21 +21,21 @@ export function handleHandKeyPresses(
   const isCtrlPressed = event.getModifierState("Control");
 
   switch (event.key) {
-    case "ArrowLeft": {
+    case Key.ArrowLeft: {
       if (hoveredSquareIndex !== 0) {
         handDispatch(createMoveSelectorAction(-1));
       }
       break;
     }
 
-    case "ArrowRight": {
+    case Key.ArrowRight: {
       if (hoveredSquareIndex !== handCount - 1) {
         handDispatch(createMoveSelectorAction(1));
       }
       break;
     }
 
-    case "Enter": {
+    case Key.Enter: {
       if (isCtrlPressed) {
         gameDispatch(createPlaceHandSquareAction(hoveredSquareIndex));
       } else {
