@@ -30,11 +30,16 @@ interface GridProps {
   dimensions: Dimensions;
   selectedSquares: GridSelected | undefined;
   gameDispatch: React.Dispatch<GameActions>;
-  isGameActive: boolean;
+  isGridActive: boolean;
 }
 
+const GridContainer = styled.div`
+  padding: 5px;
+  flex: 2;
+`;
+
 const SquaresContainer = styled.div`
-  display: inline-flex;
+  display: inline-block;
   flex-direction: column;
   border: solid 1px black;
   background-color: lightgreen;
@@ -62,7 +67,7 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         props.selectedSquares && props.selectedSquares.squares,
         state.offset,
         props.dimensions,
-        props.isGameActive
+        props.isGridActive
       );
     window.document.addEventListener("keydown", onKeyPress);
     return () => {
@@ -73,16 +78,7 @@ const Grid: React.FunctionComponent<GridProps> = props => {
   const { width, height } = props.dimensions;
 
   return (
-    <div>
-      <p>
-        Offset: {state.offset.x}, {state.offset.y}
-      </p>
-      <p>
-        Current Selection: {state.hoveredSquare.x}, {state.hoveredSquare.y}
-      </p>
-      <p>
-        Use <code>ctlr & arrow keys</code> to navigate
-      </p>
+    <GridContainer>
       {renderGrid(
         width,
         height,
@@ -90,9 +86,9 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         state.offset,
         state.hoveredSquare,
         props.selectedSquares,
-        props.isGameActive
+        props.isGridActive
       )}
-    </div>
+    </GridContainer>
   );
 };
 

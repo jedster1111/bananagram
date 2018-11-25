@@ -36,7 +36,23 @@ export interface Column {
 }
 
 const GameInfoContainer = styled.div`
-  border: 1px solid black;
+  flex: 1;
+  min-width: 370px;
+  padding: 5px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+`;
+
+const GameContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+`;
+
+const StyledLi = styled.li`
+  list-style: none;
 `;
 
 const Game: React.FunctionComponent<{}> = props => {
@@ -57,11 +73,40 @@ const Game: React.FunctionComponent<{}> = props => {
   });
 
   return (
-    <>
+    <GameContainer>
       <GameInfoContainer>
-        <p>
-          Use <code>Enter</code> to select and then drop tiles
-        </p>
+        <Hand
+          handSquares={state.handSquares}
+          isHandActive={!isGridActive}
+          gameDispatch={dispatch}
+          selectedIndex={
+            state.handSelected ? state.handSelected.index : undefined
+          }
+        />
+        <ul>
+          <StyledLi>
+            <code>Enter</code> to select tiles
+          </StyledLi>
+          <StyledLi>
+            <code>Ctrl + Enter</code> to place tiles
+          </StyledLi>
+          <StyledLi>
+            <code>Ctrl + Arrow Keys</code> to move camera
+          </StyledLi>
+          <StyledLi>
+            <code>Delete</code> to put tiles back into hand
+          </StyledLi>
+          <StyledLi>
+            <code>Spacebar</code> to toggle between the grid and your hand
+          </StyledLi>
+          <StyledLi>
+            <code>Escape</code> to deselect all selected squares
+          </StyledLi>
+          <StyledLi>
+            <code>Type a letter</code> to enter a letter at your hovered
+            position
+          </StyledLi>
+        </ul>
         <p>{state.error || "All going smoothly!"}</p>
       </GameInfoContainer>
       <Grid
@@ -69,17 +114,9 @@ const Game: React.FunctionComponent<{}> = props => {
         dimensions={{ width: 10, height: 10 }}
         selectedSquares={state.gridSelected}
         gameDispatch={dispatch}
-        isGameActive={isGridActive}
+        isGridActive={isGridActive}
       />
-      <Hand
-        handSquares={state.handSquares}
-        isHandActive={!isGridActive}
-        gameDispatch={dispatch}
-        selectedIndex={
-          state.handSelected ? state.handSelected.index : undefined
-        }
-      />
-    </>
+    </GameContainer>
   );
 };
 

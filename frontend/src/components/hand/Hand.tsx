@@ -19,7 +19,7 @@ interface HandProps {
 const HandContainer = styled.div`
   display: inline-flex;
   flex-wrap: wrap;
-  margin: 8px 5px;
+  justify-content: center;
   padding: 3px;
   border: solid 1px black;
   background-color: lightgreen;
