@@ -20,7 +20,8 @@ export function createInitialState(): State {
     },
     error: undefined,
     handSquares: ["A", "B", "C", "D", "E", "F"],
-    active: "hand"
+    active: "hand",
+    isOffsetControlsInverted: false
   };
 }
 
@@ -148,8 +149,11 @@ export function reducer(currentState: State, action: GameActions): State {
       if (isHandSelected(handSelected)) {
         const existingValue = getValueInSquares(vector, currentState.squares);
 
+        // remove the square that was just placed from your hand
+        newHandSquares.splice(handSelected.index, 1);
+
         if (existingValue !== undefined) {
-          newHandSquares.push(existingValue);
+          newHandSquares.splice(0, 0, existingValue);
         }
 
         // Place the selected square at the hovered position
@@ -158,9 +162,6 @@ export function reducer(currentState: State, action: GameActions): State {
           handSquares[handSelected.index],
           currentState.squares
         );
-
-        // remove the square that was just placed from your hand
-        newHandSquares.splice(handSelected.index, 1);
       }
 
       if (isGridSelected(gridSelected)) {
@@ -400,6 +401,13 @@ export function reducer(currentState: State, action: GameActions): State {
         },
         gridSelected: undefined,
         error: undefined
+      };
+    }
+
+    case ActionTypes.setIsOffsetInverted: {
+      return {
+        ...currentState,
+        isOffsetControlsInverted: action.payload.isOffsetControlsInverted
       };
     }
 

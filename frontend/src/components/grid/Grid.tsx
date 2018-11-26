@@ -29,8 +29,10 @@ interface GridProps {
   squares: Squares;
   dimensions: Dimensions;
   selectedSquares: GridSelected | undefined;
+  isSelectedSquares: boolean;
   gameDispatch: React.Dispatch<GameActions>;
   isGridActive: boolean;
+  isOffsetControlsInverted: boolean;
 }
 
 const GridContainer = styled.div`
@@ -65,9 +67,11 @@ const Grid: React.FunctionComponent<GridProps> = props => {
         props.gameDispatch,
         state.hoveredSquare,
         props.selectedSquares && props.selectedSquares.squares,
+        props.isSelectedSquares,
         state.offset,
         props.dimensions,
-        props.isGridActive
+        props.isGridActive,
+        props.isOffsetControlsInverted
       );
     window.document.addEventListener("keydown", onKeyPress);
     return () => {
@@ -107,22 +111,22 @@ function renderGrid(
     const row: SquareProps[] = [];
 
     for (let x = 0; x < width; x++) {
-      const relativePosition = createVector(x, y);
-      const absolutePosition = translateVector(
-        relativePosition,
-        inverseVector(offset)
-      );
+      const gridPosition = createVector(x, y);
+      const gamePosition = translateVector(gridPosition, inverseVector(offset));
 
-      const isHovered = isSameVector(absolutePosition, hoveredSquare);
+      const isHovered = isSameVector(
+        gamePosition,
+        translateVector(hoveredSquare, inverseVector(offset))
+      );
       const isPicked =
         !!pickedSquares &&
-        !!getValueInSquares(absolutePosition, pickedSquares.squares);
+        !!getValueInSquares(gamePosition, pickedSquares.squares);
 
       const isOriginalPosPicked =
         !!pickedSquares &&
-        isSameVector(pickedSquares.originalPosition, absolutePosition);
+        isSameVector(pickedSquares.originalPosition, gamePosition);
 
-      const value = getValueInSquares(absolutePosition, squares);
+      const value = getValueInSquares(gamePosition, squares);
 
       row.push({
         value,

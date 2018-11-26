@@ -2,6 +2,7 @@ import { Key } from "ts-key-enum";
 import { getValueInSquares } from "../../common/squaresMethods";
 import {
   createVector,
+  inverseVector,
   translateVector,
   Vector
 } from "../../common/vectorMethods";
@@ -16,8 +17,8 @@ import {
 } from "../game/actions";
 import { Squares } from "../game/Game";
 import {
-  createaTranslateSelectorAction,
   createTranslateOffsetAction,
+  createTranslateSelectorAction,
   GridActions
 } from "./actions";
 import { Dimensions } from "./Grid";
@@ -28,9 +29,11 @@ export function handleKeyPresses(
   gameDispatch: React.Dispatch<GameActions>,
   hoveredSquareVector: Vector,
   selectedSquares: Squares | undefined,
+  isSelectedHandSquare: boolean,
   offset: Vector,
   dimensions: Dimensions,
-  isActive: boolean
+  isActive: boolean,
+  isOffsetControlsInverted: boolean
 ) {
   if (!isActive) {
     return;
@@ -38,56 +41,74 @@ export function handleKeyPresses(
 
   const isCtrlPressed = event.ctrlKey;
   const isShiftPressed = event.shiftKey;
-  const { x: absX, y: absY } = translateVector(hoveredSquareVector, offset);
+  const gameSquareVector = translateVector(
+    hoveredSquareVector,
+    inverseVector(offset)
+  );
 
   switch (event.key) {
     case Key.ArrowUp: {
       const vector = createVector(0, -1);
       if (isCtrlPressed) {
-        gridDispatch(createTranslateOffsetAction(vector));
-      } else if (absY !== 0) {
-        gridDispatch(createaTranslateSelectorAction(vector));
+        gridDispatch(
+          createTranslateOffsetAction(
+            isOffsetControlsInverted ? inverseVector(vector) : vector
+          )
+        );
+      } else if (hoveredSquareVector.y !== 0) {
+        gridDispatch(createTranslateSelectorAction(vector));
       }
       break;
     }
     case Key.ArrowRight: {
       const vector = createVector(1, 0);
       if (isCtrlPressed) {
-        gridDispatch(createTranslateOffsetAction(vector));
-      } else if (absX !== dimensions.width - 1) {
-        gridDispatch(createaTranslateSelectorAction(vector));
+        gridDispatch(
+          createTranslateOffsetAction(
+            isOffsetControlsInverted ? inverseVector(vector) : vector
+          )
+        );
+      } else if (hoveredSquareVector.x !== dimensions.width - 1) {
+        gridDispatch(createTranslateSelectorAction(vector));
       }
       break;
     }
     case Key.ArrowDown: {
       const vector = createVector(0, 1);
       if (isCtrlPressed) {
-        gridDispatch(createTranslateOffsetAction(vector));
-      } else if (absY !== dimensions.height - 1) {
-        gridDispatch(createaTranslateSelectorAction(vector));
+        gridDispatch(
+          createTranslateOffsetAction(
+            isOffsetControlsInverted ? inverseVector(vector) : vector
+          )
+        );
+      } else if (hoveredSquareVector.y !== dimensions.height - 1) {
+        gridDispatch(createTranslateSelectorAction(vector));
       }
       break;
     }
     case Key.ArrowLeft: {
       const vector = createVector(-1, 0);
       if (isCtrlPressed) {
-        gridDispatch(createTranslateOffsetAction(vector));
-      } else if (absX !== 0) {
-        gridDispatch(createaTranslateSelectorAction(vector));
+        gridDispatch(
+          createTranslateOffsetAction(
+            isOffsetControlsInverted ? inverseVector(vector) : vector
+          )
+        );
+      } else if (hoveredSquareVector.x !== 0) {
+        gridDispatch(createTranslateSelectorAction(vector));
       }
       break;
     }
     case Key.Enter: {
       if (isShiftPressed) {
-        selectedSquares &&
-        getValueInSquares(hoveredSquareVector, selectedSquares)
-          ? gameDispatch(createDeselectGridSquareAction(hoveredSquareVector))
-          : gameDispatch(createSelectGridSquareAction(hoveredSquareVector));
+        selectedSquares && getValueInSquares(gameSquareVector, selectedSquares)
+          ? gameDispatch(createDeselectGridSquareAction(gameSquareVector))
+          : gameDispatch(createSelectGridSquareAction(gameSquareVector));
       } else {
-        if (!selectedSquares) {
-          gameDispatch(createSelectGridSquareAction(hoveredSquareVector));
+        if (selectedSquares || isSelectedHandSquare) {
+          gameDispatch(createPlaceGridSquareAction(gameSquareVector));
         } else {
-          gameDispatch(createPlaceGridSquareAction(hoveredSquareVector));
+          gameDispatch(createSelectGridSquareAction(gameSquareVector));
         }
       }
       break;
@@ -96,17 +117,14 @@ export function handleKeyPresses(
     case "Delete": {
       selectedSquares
         ? gameDispatch(createPlaceHandSquareAction())
-        : gameDispatch(createSendHoveredToHandAction(hoveredSquareVector));
+        : gameDispatch(createSendHoveredToHandAction(gameSquareVector));
       break;
     }
 
     default: {
       if (RegExp(/^[a-z]$/i).test(event.key)) {
         gameDispatch(
-          createPlaceGridSquareWithKeyboardAction(
-            event.key,
-            hoveredSquareVector
-          )
+          createPlaceGridSquareWithKeyboardAction(event.key, gameSquareVector)
         );
       }
       break;

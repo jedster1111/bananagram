@@ -14,7 +14,8 @@ export enum ActionTypes {
   clearSelected = "DISCARD_SELECTED",
   makeActive = "MAKE_ACTIVE",
   sendHoveredToHand = "SEND_HOVERED_TO_HAND",
-  selectHandSquare = "SELECT_HAND_SQUARE"
+  selectHandSquare = "SELECT_HAND_SQUARE",
+  setIsOffsetInverted = "SET_IS_OFFSET_INVERTED"
 }
 
 export type GameActions =
@@ -26,7 +27,8 @@ export type GameActions =
   | PlaceHandSquareAction
   | ClearSelectedAction
   | SendHoveredToHandAction
-  | MakeActiveAction;
+  | MakeActiveAction
+  | SetIsOffsetAction;
 
 export type SelectGridSquareAction = VectorAction<ActionTypes.selectGridSquare>;
 
@@ -120,5 +122,19 @@ export function createSelectHandSquareAction(
   return {
     type: ActionTypes.selectHandSquare,
     payload: { index }
+  };
+}
+
+export interface SetIsOffsetAction {
+  type: ActionTypes.setIsOffsetInverted;
+  payload: { isOffsetControlsInverted: boolean };
+}
+
+export function createSetIsOffsetAction(
+  isOffsetControlsInverted: boolean
+): SetIsOffsetAction {
+  return {
+    type: ActionTypes.setIsOffsetInverted,
+    payload: { isOffsetControlsInverted }
   };
 }

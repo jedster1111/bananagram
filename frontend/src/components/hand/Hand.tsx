@@ -14,6 +14,7 @@ interface HandProps {
   isHandActive: boolean;
   gameDispatch: React.Dispatch<GameActions>;
   selectedIndex: number | undefined;
+  isSelectedGrid: boolean;
 }
 
 const HandContainer = styled.div`
@@ -50,6 +51,7 @@ const Hand: React.FC<HandProps> = props => {
   );
 
   const handCount = props.handSquares.length;
+  const isSelectedSquare = props.selectedIndex !== undefined;
 
   React.useEffect(() => {
     const onKeyPress = (event: KeyboardEvent) =>
@@ -59,7 +61,9 @@ const Hand: React.FC<HandProps> = props => {
         props.gameDispatch,
         props.isHandActive,
         state.hoveredSquareIndex,
-        handCount
+        handCount,
+        isSelectedSquare,
+        props.isSelectedGrid
       );
 
     window.document.addEventListener("keydown", onKeyPress);

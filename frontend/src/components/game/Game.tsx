@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Vector } from "../../common/vectorMethods";
 import Grid from "../grid/Grid";
 import Hand from "../hand/Hand";
-import { GameActions } from "./actions";
+import { createSetIsOffsetAction, GameActions } from "./actions";
 import { handleGameKeyPresses } from "./handleGameKeyPresses";
 import { createInitialState, reducer } from "./reducer";
 
@@ -14,6 +14,7 @@ export interface State {
   error: string | undefined;
   handSquares: string[];
   active: ActiveTypes;
+  isOffsetControlsInverted: boolean;
 }
 
 export type ActiveTypes = "hand" | "grid";
@@ -82,19 +83,20 @@ const Game: React.FunctionComponent<{}> = props => {
           selectedIndex={
             state.handSelected ? state.handSelected.index : undefined
           }
+          isSelectedGrid={!!state.handSelected}
         />
         <ul>
           <StyledLi>
-            <code>Enter</code> to select tiles
+            <code>Enter</code> to select and place tiles
           </StyledLi>
           <StyledLi>
-            <code>Ctrl + Enter</code> to place tiles
+            <code>Shift + Enter</code> to select multiple tiles
           </StyledLi>
           <StyledLi>
             <code>Ctrl + Arrow Keys</code> to move camera
           </StyledLi>
           <StyledLi>
-            <code>Delete</code> to put tiles back into hand
+            <code>Delete or Backspace</code> to put tiles back into hand
           </StyledLi>
           <StyledLi>
             <code>Spacebar</code> to toggle between the grid and your hand
@@ -107,14 +109,25 @@ const Game: React.FunctionComponent<{}> = props => {
             position
           </StyledLi>
         </ul>
+        <input
+          id="inverted-offset-controls"
+          type="checkbox"
+          checked={state.isOffsetControlsInverted}
+          onChange={e => dispatch(createSetIsOffsetAction(e.target.checked))}
+        />
+        <label htmlFor="inverted-offset-controls">
+          Inverted Offset Controls
+        </label>
         <p>{state.error || "All going smoothly!"}</p>
       </GameInfoContainer>
       <Grid
         squares={state.squares}
         dimensions={{ width: 10, height: 10 }}
         selectedSquares={state.gridSelected}
+        isSelectedSquares={!!state.handSelected}
         gameDispatch={dispatch}
         isGridActive={isGridActive}
+        isOffsetControlsInverted={state.isOffsetControlsInverted}
       />
     </GameContainer>
   );

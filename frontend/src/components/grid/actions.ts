@@ -20,6 +20,6 @@ export type TranslateSelectorAction = VectorAction<
   ActionTypes.translateSelector
 >;
 
-export const createaTranslateSelectorAction = vectorActionCreatorFactory<
+export const createTranslateSelectorAction = vectorActionCreatorFactory<
   ActionTypes.translateSelector
 >(ActionTypes.translateSelector);

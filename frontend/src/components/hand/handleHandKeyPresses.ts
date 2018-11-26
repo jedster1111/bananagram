@@ -12,13 +12,13 @@ export function handleHandKeyPresses(
   gameDispatch: React.Dispatch<GameActions>,
   isActive: boolean,
   hoveredSquareIndex: number,
-  handCount: number
+  handCount: number,
+  isSelectedHand: boolean,
+  isSelectedGrid: boolean
 ) {
   if (!isActive) {
     return;
   }
-
-  const isCtrlPressed = event.getModifierState("Control");
 
   switch (event.key) {
     case Key.ArrowLeft: {
@@ -36,7 +36,7 @@ export function handleHandKeyPresses(
     }
 
     case Key.Enter: {
-      if (isCtrlPressed) {
+      if (isSelectedHand || isSelectedGrid) {
         gameDispatch(createPlaceHandSquareAction(hoveredSquareIndex));
       } else {
         gameDispatch(createSelectHandSquareAction(hoveredSquareIndex));

@@ -5,7 +5,6 @@
   "license": "MIT",
   "devDependencies": {
     "@types/webpack-env": "^1.13.6",
-    "ts-key-enum": "^2.0.0",
     "tslint-config-prettier": "^1.15.0"
   }
 }
