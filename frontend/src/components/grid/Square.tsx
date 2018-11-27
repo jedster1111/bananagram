@@ -1,5 +1,6 @@
 import * as React from "react";
 import styled from "styled-components";
+import { Vector } from "../../common/vectorMethods";
 
 export interface SquareProps {
   value: string | undefined;
@@ -7,6 +8,9 @@ export interface SquareProps {
   isPicked: boolean;
   isOriginalPosPicked: boolean;
   isGameActive: boolean;
+  gamePosition: Vector;
+  handleMouseDown: (e: React.MouseEvent) => void;
+  handleMouseUp: (e: React.MouseEvent) => void;
 }
 
 const SquareContainer = styled.div<{
@@ -35,13 +39,18 @@ const Square: React.FunctionComponent<SquareProps> = ({
   isHovered,
   isPicked,
   isOriginalPosPicked,
-  isGameActive
+  isGameActive,
+  gamePosition,
+  handleMouseDown,
+  handleMouseUp
 }) => (
   <SquareContainer
     isHovered={isHovered}
     isPicked={isPicked}
     isOriginalPosPicked={isOriginalPosPicked}
     isGameActive={isGameActive}
+    onMouseDown={handleMouseDown}
+    onMouseUp={handleMouseUp}
   >
     {value}
   </SquareContainer>

@@ -50,6 +50,7 @@ const GameContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   align-content: center;
+  user-select: none;
 `;
 
 const StyledLi = styled.li`

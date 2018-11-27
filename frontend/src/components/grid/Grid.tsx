@@ -79,31 +79,38 @@ const Grid: React.FunctionComponent<GridProps> = props => {
     };
   });
 
-  const { width, height } = props.dimensions;
+  const handleMouseDown = (gamePosition: Vector) => {
+    console.log(gamePosition);
+  };
+  const handleMouseUp = (gamePosition: Vector) => {
+    console.log(gamePosition);
+  };
 
   return (
     <GridContainer>
       {renderGrid(
-        width,
-        height,
+        props.dimensions,
         props.squares,
         state.offset,
         state.hoveredSquare,
         props.selectedSquares,
-        props.isGridActive
+        props.isGridActive,
+        handleMouseDown,
+        handleMouseUp
       )}
     </GridContainer>
   );
 };
 
 function renderGrid(
-  width: number,
-  height: number,
+  { width, height }: Dimensions,
   squares: Squares,
   offset: Vector,
   hoveredSquare: Vector,
   pickedSquares: GridSelected | undefined,
-  isGameActive: boolean
+  isGameActive: boolean,
+  handleMouseDown: (gamePosition: Vector) => void,
+  handleMouseUp: (gamePosition: Vector) => void
 ) {
   const rows: SquareProps[][] = [];
 
@@ -133,7 +140,10 @@ function renderGrid(
         isHovered,
         isPicked,
         isOriginalPosPicked,
-        isGameActive
+        isGameActive,
+        gamePosition,
+        handleMouseDown: () => handleMouseDown(gamePosition),
+        handleMouseUp: () => handleMouseUp(gamePosition)
       });
     }
 
