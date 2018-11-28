@@ -34,6 +34,14 @@ export function reducer(currentState: State, action: GridActions): State {
         hoveredSquare: newActualPosition
       };
     }
+
+    case ActionTypes.setSelectorPosition: {
+      return {
+        ...currentState,
+        hoveredSquare: action.payload.vector
+      };
+    }
+
     default:
       return currentState;
   }

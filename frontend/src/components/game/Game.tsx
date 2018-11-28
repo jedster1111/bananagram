@@ -15,6 +15,7 @@ export interface State {
   handSquares: string[];
   active: ActiveTypes;
   isOffsetControlsInverted: boolean;
+  dragStart: Vector | undefined;
 }
 
 export type ActiveTypes = "hand" | "grid";
@@ -34,6 +35,11 @@ export interface Squares {
 
 export interface Column {
   [row: number]: string | undefined;
+}
+
+export interface ClickEvent {
+  start: { position: Vector } | undefined;
+  end: { position: Vector } | undefined;
 }
 
 const GameInfoContainer = styled.div`
@@ -129,6 +135,7 @@ const Game: React.FunctionComponent<{}> = props => {
         gameDispatch={dispatch}
         isGridActive={isGridActive}
         isOffsetControlsInverted={state.isOffsetControlsInverted}
+        dragStart={state.dragStart}
       />
     </GameContainer>
   );

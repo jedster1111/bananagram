@@ -8,9 +8,15 @@ import {
   translateVector,
   Vector
 } from "../../common/vectorMethods";
-import { GameActions } from "../game/actions";
+import {
+  createEndClickAction,
+  createPlaceGridSquareAction,
+  createSelectGridSquareAction,
+  createStartClickAction,
+  GameActions
+} from "../game/actions";
 import { GridSelected, Squares } from "../game/Game";
-import { GridActions } from "./actions";
+import { createSetSelectorAction, GridActions } from "./actions";
 import { handleKeyPresses } from "./handleGridKeyPresses";
 import { createInitialState, reducer } from "./reducer";
 import Square, { SquareProps } from "./Square";
@@ -33,6 +39,7 @@ interface GridProps {
   gameDispatch: React.Dispatch<GameActions>;
   isGridActive: boolean;
   isOffsetControlsInverted: boolean;
+  dragStart: Vector | undefined;
 }
 
 const GridContainer = styled.div`
@@ -79,11 +86,38 @@ const Grid: React.FunctionComponent<GridProps> = props => {
     };
   });
 
-  const handleMouseDown = (gamePosition: Vector) => {
-    console.log(gamePosition);
+  const handleMouseDown = (
+    e: React.MouseEvent<Element>,
+    clickedGamePosition: Vector
+  ) => {
+    dispatch(
+      createSetSelectorAction(
+        translateVector(clickedGamePosition, state.offset)
+      )
+    );
+
+    props.gameDispatch(createStartClickAction(clickedGamePosition));
+    props.gameDispatch(createSelectGridSquareAction(clickedGamePosition));
   };
-  const handleMouseUp = (gamePosition: Vector) => {
-    console.log(gamePosition);
+
+  const handleMouseUp = (
+    e: React.MouseEvent<Element>,
+    clickedGamePosition: Vector
+  ) => {
+    dispatch(
+      createSetSelectorAction(
+        translateVector(clickedGamePosition, state.offset)
+      )
+    );
+
+    if (
+      props.dragStart &&
+      !isSameVector(props.dragStart, clickedGamePosition)
+    ) {
+      props.gameDispatch(createPlaceGridSquareAction(clickedGamePosition));
+    }
+
+    props.gameDispatch(createEndClickAction(clickedGamePosition));
   };
 
   return (
@@ -109,8 +143,8 @@ function renderGrid(
   hoveredSquare: Vector,
   pickedSquares: GridSelected | undefined,
   isGameActive: boolean,
-  handleMouseDown: (gamePosition: Vector) => void,
-  handleMouseUp: (gamePosition: Vector) => void
+  handleMouseDown: (e: React.MouseEvent<Element>, gamePosition: Vector) => void,
+  handleMouseUp: (e: React.MouseEvent<Element>, gamePosition: Vector) => void
 ) {
   const rows: SquareProps[][] = [];
 
@@ -142,8 +176,8 @@ function renderGrid(
         isOriginalPosPicked,
         isGameActive,
         gamePosition,
-        handleMouseDown: () => handleMouseDown(gamePosition),
-        handleMouseUp: () => handleMouseUp(gamePosition)
+        handleMouseDown: e => handleMouseDown(e, gamePosition),
+        handleMouseUp: e => handleMouseUp(e, gamePosition)
       });
     }
 

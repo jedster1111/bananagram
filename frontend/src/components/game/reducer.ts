@@ -21,7 +21,8 @@ export function createInitialState(): State {
     error: undefined,
     handSquares: ["A", "B", "C", "D", "E", "F"],
     active: "hand",
-    isOffsetControlsInverted: false
+    isOffsetControlsInverted: false,
+    dragStart: undefined
   };
 }
 
@@ -131,8 +132,13 @@ export function reducer(currentState: State, action: GameActions): State {
     }
 
     case ActionTypes.placeGridSquare: {
-      const { gridSelected, handSelected, handSquares } = currentState;
-      const { vector } = action.payload;
+      const {
+        gridSelected,
+        handSelected,
+        handSquares,
+        dragStart
+      } = currentState;
+      const newPosition = action.payload.vector;
 
       if (!isGridSelected(gridSelected) && !isHandSelected(handSelected)) {
         console.log("Nothing was selected D:");
@@ -147,7 +153,10 @@ export function reducer(currentState: State, action: GameActions): State {
       let squaresThatHaveBeenChanged = {};
 
       if (isHandSelected(handSelected)) {
-        const existingValue = getValueInSquares(vector, currentState.squares);
+        const existingValue = getValueInSquares(
+          newPosition,
+          currentState.squares
+        );
 
         // remove the square that was just placed from your hand
         newHandSquares.splice(handSelected.index, 1);
@@ -158,17 +167,20 @@ export function reducer(currentState: State, action: GameActions): State {
 
         // Place the selected square at the hovered position
         newGridSquares = setSquareValue(
-          vector,
+          newPosition,
           handSquares[handSelected.index],
           currentState.squares
         );
       }
 
       if (isGridSelected(gridSelected)) {
+        // if there is a drag start use that, otherwise use the keyboard selected original position
+        const originalPosition = dragStart || gridSelected.originalPosition;
+
         // the vector to translate from the orignal position to the hovered position
         const translationVector = translateVector(
-          vector,
-          inverseVector(gridSelected.originalPosition)
+          newPosition,
+          inverseVector(originalPosition || gridSelected.originalPosition)
         );
 
         // Looping through the selected squares
@@ -408,6 +420,20 @@ export function reducer(currentState: State, action: GameActions): State {
       return {
         ...currentState,
         isOffsetControlsInverted: action.payload.isOffsetControlsInverted
+      };
+    }
+
+    case ActionTypes.startClick: {
+      return {
+        ...currentState,
+        dragStart: action.payload.startPosition
+      };
+    }
+
+    case ActionTypes.endClick: {
+      return {
+        ...currentState,
+        dragStart: undefined
       };
     }
 
