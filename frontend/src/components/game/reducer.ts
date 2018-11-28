@@ -205,7 +205,7 @@ export function reducer(currentState: State, action: GameActions): State {
                     );
 
                     // get the value of the square that we're trying to move into
-                    const existingValue = getValueInSquares(
+                    const valueOfSquareBeingChanged = getValueInSquares(
                       newPositionVector,
                       currentState.squares
                     );
@@ -236,19 +236,20 @@ export function reducer(currentState: State, action: GameActions): State {
                     // If the original position has been edited in a previous loop,
                     // don't clear it
                     if (!squareHasBeenEdited) {
-                      // if there's already a tile and the new position isn't going to be edited, then move it into your hand
-                      if (
-                        existingValue !== undefined &&
-                        !isNewPositionInSelected
-                      ) {
-                        newHandSquares.splice(0, 0, existingValue);
-                      }
                       // remove the square from it's old position
                       newGridSquares = setSquareValue(
                         positionVector,
                         undefined,
                         newGridSquares
                       );
+                    }
+
+                    // if there's already a tile and the new position isn't going to be edited, then move it into your hand
+                    if (
+                      valueOfSquareBeingChanged !== undefined &&
+                      !isNewPositionInSelected
+                    ) {
+                      newHandSquares.splice(0, 0, valueOfSquareBeingChanged);
                     }
                   }
                 }
