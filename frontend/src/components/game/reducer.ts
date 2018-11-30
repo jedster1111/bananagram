@@ -6,7 +6,15 @@ import {
   translateVector
 } from "../../common/vectorMethods";
 import { ActionTypes, GameActions } from "./actions";
-import { Column, GridSelected, HandSelected, State } from "./Game";
+import {
+  ActiveTypes,
+  ClickObjects,
+  Column,
+  GridClickObject,
+  GridSelected,
+  HandSelected,
+  State
+} from "./Game";
 
 export function createInitialState(): State {
   return {
@@ -20,7 +28,7 @@ export function createInitialState(): State {
     },
     error: undefined,
     handSquares: ["A", "B", "C", "D", "E", "F"],
-    active: "hand",
+    active: ActiveTypes.hand,
     isOffsetControlsInverted: false,
     dragStart: undefined
   };
@@ -37,6 +45,18 @@ function isHandSelected(
 ): selectedHand is HandSelected {
   return selectedHand !== undefined;
 }
+
+function isGridClickObject(
+  clickObject: ClickObjects | undefined
+): clickObject is GridClickObject {
+  return !!clickObject && clickObject.area === ActiveTypes.grid;
+}
+
+// function isHandClickObject(
+//   clickObject: ClickObjects | undefined
+// ): clickObject is HandClickObject {
+//   return !!clickObject && clickObject.area === ActiveTypes.hand;
+// }
 
 export function reducer(currentState: State, action: GameActions): State {
   switch (action.type) {
@@ -175,7 +195,9 @@ export function reducer(currentState: State, action: GameActions): State {
 
       if (isGridSelected(gridSelected)) {
         // if there is a drag start use that, otherwise use the keyboard selected original position
-        const originalPosition = dragStart || gridSelected.originalPosition;
+        const originalPosition = isGridClickObject(dragStart)
+          ? dragStart && dragStart.position
+          : gridSelected.originalPosition;
 
         // the vector to translate from the orignal position to the hovered position
         const translationVector = translateVector(
@@ -427,7 +449,10 @@ export function reducer(currentState: State, action: GameActions): State {
     case ActionTypes.startClick: {
       return {
         ...currentState,
-        dragStart: action.payload.startPosition
+        dragStart: {
+          area: ActiveTypes.grid,
+          position: action.payload.startPosition
+        }
       };
     }
 

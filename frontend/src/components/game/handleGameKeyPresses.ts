@@ -5,6 +5,7 @@ import {
   createMakeActiveAction,
   GameActions
 } from "./actions";
+import { ActiveTypes } from "./Game";
 
 export function handleGameKeyPresses(
   event: KeyboardEvent,
@@ -13,7 +14,11 @@ export function handleGameKeyPresses(
 ) {
   switch (event.key) {
     case " ": {
-      dispatch(createMakeActiveAction(isGridActive ? "hand" : "grid"));
+      dispatch(
+        createMakeActiveAction(
+          isGridActive ? ActiveTypes.hand : ActiveTypes.grid
+        )
+      );
       break;
     }
     case Key.Escape: {

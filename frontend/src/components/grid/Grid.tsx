@@ -15,7 +15,7 @@ import {
   createStartClickAction,
   GameActions
 } from "../game/actions";
-import { GridSelected, Squares } from "../game/Game";
+import { ActiveTypes, ClickObjects, GridSelected, Squares } from "../game/Game";
 import { createSetSelectorAction, GridActions } from "./actions";
 import { handleKeyPresses } from "./handleGridKeyPresses";
 import { createInitialState, reducer } from "./reducer";
@@ -39,7 +39,7 @@ interface GridProps {
   gameDispatch: React.Dispatch<GameActions>;
   isGridActive: boolean;
   isOffsetControlsInverted: boolean;
-  dragStart: Vector | undefined;
+  dragStart: ClickObjects | undefined;
 }
 
 const GridContainer = styled.div`
@@ -112,7 +112,8 @@ const Grid: React.FunctionComponent<GridProps> = props => {
 
     if (
       props.dragStart &&
-      !isSameVector(props.dragStart, clickedGamePosition)
+      props.dragStart.area === ActiveTypes.grid &&
+      !isSameVector(props.dragStart.position, clickedGamePosition)
     ) {
       props.gameDispatch(createPlaceGridSquareAction(clickedGamePosition));
     }

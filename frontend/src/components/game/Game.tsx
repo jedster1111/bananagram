@@ -16,10 +16,39 @@ export interface State {
   handSquares: string[];
   active: ActiveTypes;
   isOffsetControlsInverted: boolean;
-  dragStart: Vector | undefined;
+  // dragStart: Vector | undefined;
+  dragStart: ClickObjects | undefined;
 }
 
-export type ActiveTypes = "hand" | "grid";
+export enum ActiveTypes {
+  hand = "HAND",
+  grid = "GRID"
+}
+
+export interface HandClickObject {
+  area: ActiveTypes.hand;
+  position: number;
+}
+export interface GridClickObject {
+  area: ActiveTypes.grid;
+  position: Vector;
+}
+
+export type ClickObjects = HandClickObject | GridClickObject;
+
+export function createClickObject<T extends ActiveTypes>(
+  area: T,
+  position: T extends ActiveTypes.grid
+    ? Vector
+    : T extends ActiveTypes.hand
+    ? number
+    : never
+) {
+  return {
+    area,
+    position
+  };
+}
 
 export interface GridSelected {
   originalPosition: Vector;
@@ -66,7 +95,7 @@ const Game: React.FunctionComponent<{}> = props => {
     createInitialState()
   );
 
-  const isGridActive = state.active === "grid";
+  const isGridActive = state.active === ActiveTypes.grid;
 
   React.useEffect(() => {
     const onKeyPress = (event: KeyboardEvent) =>
